@@ -1,0 +1,8 @@
+[research.md](file:///home/hatch/workspace/projects/portfolio-site/.agents/runs/2/research.md) の §3・§4 に従い、無料セルフチェック（診断フロー）ページと導線を実装しました。
+
+### 実装・変更ファイル
+- [shindan.html](file:///home/hatch/workspace/projects/portfolio-site/site/shindan.html)：入口画面 → 質問ステップ（1問1画面、進捗表示、`data-step` / `data-q` / `data-value` 属性付与）→ 回答見直し画面 → 結果画面（免責文、総合スコアなしの3区分、結果コピー、見直し・再計算、やり直し、主・副CTA、モニター案内）
+- [shindan.js](file:///home/hatch/workspace/projects/portfolio-site/site/js/shindan.js)：純粋関数 [`evaluate`](file:///home/hatch/workspace/projects/portfolio-site/site/js/shindan.js#L261-L374)、Q1=siteによるQ2分岐と不要回答の破棄・問番号振り直し、優先順（`Q3`・`Q4` → `Q2`・`Q6` → `Q5`・`Q7`、最大3件＋残り一覧表示）、`sessionStorage` と History API 対応
+- [style.css](file:///home/hatch/workspace/projects/portfolio-site/site/css/style.css#L1182-L1576)：既存トークンを用いた診断UI・選択状態表示・印刷用スタイルを追記
+- [index.html](file:///home/hatch/workspace/projects/portfolio-site/site/index.html)、[works.html](file:///home/hatch/workspace/projects/portfolio-site/site/works.html)、[column.html](file:///home/hatch/workspace/projects/portfolio-site/site/column.html)、[tokushoho.html](file:///home/hatch/workspace/projects/portfolio-site/site/tokushoho.html)：ナビゲーションに「無料セルフチェック」を追加し、[index.html](file:///home/hatch/workspace/projects/portfolio-site/site/index.html#L253-L263) の `#contact` 直前に診断案内セクションを追加
+- [build-log.md](file:///home/hatch/workspace/projects/portfolio-site/.agents/runs/2/build-log.md)：実施内容・根拠・未確認事項を記録

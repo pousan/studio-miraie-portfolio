@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>無料セルフチェック｜Studio Miraie</title>
+  <meta name="description" content="最大7問、選ぶだけ。回答をもとに、お店のWeb案内で今できる改善を整理します。結果を見るための名前・メールアドレスは不要です。">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">本文へ</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="site-logo" href="index.html">Studio Miraie</a>
+      <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="site-nav">メニュー</button>
+      <nav class="site-nav" id="site-nav" aria-label="主要ナビゲーション">
+        <ul class="nav-list">
+          <li><a href="index.html#service">サービス</a></li>
+          <li><a href="index.html#pricing">料金</a></li>
+          <li><a href="works.html">制作例</a></li>
+          <li><a href="column.html">コラム</a></li>
+          <li><a href="shindan.html" aria-current="page">無料セルフチェック</a></li>
+          <li><a class="nav-cta" href="index.html#contact">相談フォーム（デモ）</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <div class="container">
+      <ol class="breadcrumb-list">
+        <li><a href="index.html">ホーム</a></li>
+        <li aria-current="page">無料セルフチェック</li>
+      </ol>
+    </div>
+  </nav>
+
+  <main id="main">
+    <noscript>
+      <div class="container shindan-container" style="padding-top: 32px;">
+        <div class="callout-box">
+          <p><strong>無料セルフチェックの操作にはJavaScriptが必要です。</strong></p>
+          <p>お使いのブラウザでJavaScriptを有効にしてから再度お試しいただくか、制作内容・料金のご案内および相談フォーム（デモ）をご覧ください。</p>
+          <div class="btn-group">
+            <a class="btn btn-primary" href="index.html#contact">相談フォームを見る（デモ）</a>
+            <a class="btn btn-secondary" href="index.html#pricing">カフェ向けホームページ制作の内容を見る</a>
+          </div>
+        </div>
+      </div>
+    </noscript>
+
+    <!-- 入口画面 -->
+    <section class="section shindan-step" id="step-intro" data-step="intro">
+      <div class="container shindan-container">
+        <span class="en-display">SELF CHECK</span>
+        <span class="label-sm">Studio Miraie / カフェ店主向け・登録不要</span>
+        <h1 class="shindan-heading" id="intro-heading" tabindex="-1">お店のWeb案内、どこから整える？ 無料セルフチェック</h1>
+        <p>最大7問、選ぶだけ。回答をもとに、今できる改善を整理します。結果を見るための名前・メールアドレスは不要です。サイトやGoogleマップを自動検査するものではありません。</p>
+        <div class="btn-group">
+          <button type="button" class="btn btn-primary" id="btn-start" data-action="start">無料でチェックする</button>
+        </div>
+        <p class="note">回答内容はお使いのブラウザ内でのみ処理され、外部へ送信されません。</p>
+      </div>
+    </section>
+
+    <!-- 質問ステップ画面（1問1画面） -->
+    <section class="section shindan-step" id="step-question" data-step="question" hidden>
+      <div class="container shindan-container">
+        <div class="shindan-progress" aria-live="polite">
+          <div class="shindan-progress-header">
+            <p class="shindan-progress-text" id="progress-text">質問1 / 全7問</p>
+          </div>
+          <div class="shindan-progress-track" role="progressbar" id="progress-bar" aria-valuemin="1" aria-valuemax="7" aria-valuenow="1" aria-label="診断の進捗">
+            <div class="shindan-progress-fill" id="progress-fill" style="width: 14.28%;"></div>
+          </div>
+          <p class="shindan-progress-note shindan-hidden" id="progress-branch-note" hidden>ホームページがない・未確認のため、ホームページのスマホ表示に関する設問を省略し、全6問に更新しました。</p>
+        </div>
+
+        <!-- Q1 -->
+        <div class="shindan-q-panel" id="panel-Q1" data-step="Q1" data-question-panel="Q1">
+          <fieldset class="shindan-fieldset">
+            <legend class="shindan-legend" id="legend-Q1" tabindex="-1">
+              <span class="shindan-q-num" data-q-num="Q1">質問1</span>
+              お店のホームページはありますか？
+            </legend>
+            <div class="shindan-options">
+              <label class="shindan-option" data-q="Q1" data-value="site">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q1" value="site" data-q="Q1" data-value="site">
+                  <span class="shindan-option-text">お店のホームページがある</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+              <label class="shindan-option" data-q="Q1" data-value="social">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q1" value="social" data-q="Q1" data-value="social">
+                  <span class="shindan-option-text">Instagramや店舗紹介ページだけを使っている</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+              <label class="shindan-option" data-q="Q1" data-value="none">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q1" value="none" data-q="Q1" data-value="none">
+                  <span class="shindan-option-text">どちらも使っていない</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+              <label class="shindan-option" data-q="Q1" data-value="unknown">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q1" value="unknown" data-q="Q1" data-value="unknown">
+                  <span class="shindan-option-text">わからない</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+            </div>
+          </fieldset>
+        </div>
+
+        <!-- Q2 -->
+        <div class="shindan-q-panel" id="panel-Q2" data-step="Q2" data-question-panel="Q2" hidden>
+          <fieldset class="shindan-fieldset">
+            <legend class="shindan-legend" id="legend-Q2" tabindex="-1">
+              <span class="shindan-q-num" data-q-num="Q2">質問2</span>
+              ホームページのメニューや営業時間は、スマホで拡大せずに読めますか？
+            </legend>
+            <div class="shindan-options">
+              <label class="shindan-option" data-q="Q2" data-value="yes">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q2" value="yes" data-q="Q2" data-value="yes">
+                  <span class="shindan-option-text">読める</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+              <label class="shindan-option" data-q="Q2" data-value="issue">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q2" value="issue" data-q="Q2" data-value="issue">
+                  <span class="shindan-option-text">拡大が必要・読みにくい箇所がある</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+              <label class="shindan-option" data-q="Q2" data-value="unknown">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q2" value="unknown" data-q="Q2" data-value="unknown">
+                  <span class="shindan-option-text">まだ確認していない</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+            </div>
+          </fieldset>
+        </div>
+
+        <!-- Q3 -->
+        <div class="shindan-q-panel" id="panel-Q3" data-step="Q3" data-question-panel="Q3" hidden>
+          <fieldset class="shindan-fieldset" aria-describedby="supp-Q3">
+            <legend class="shindan-legend" id="legend-Q3" tabindex="-1">
+              <span class="shindan-q-num" data-q-num="Q3">質問3</span>
+              営業時間やメニューが変わったとき、主な案内先を更新できていますか？
+            </legend>
+            <p class="shindan-supplement" id="supp-Q3">主な案内先とは、ホームページ・Instagram・Googleマップなど、お客様に見てほしい場所です。</p>
+            <div class="shindan-options">
+              <label class="shindan-option" data-q="Q3" data-value="ready">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q3" value="ready" data-q="Q3" data-value="ready">
+                  <span class="shindan-option-text">自分やスタッフですぐ更新できる</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+              <label class="shindan-option" data-q="Q3" data-value="delegate">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q3" value="delegate" data-q="Q3" data-value="delegate">
+                  <span class="shindan-option-text">依頼先に頼めば更新できる</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+              <label class="shindan-option" data-q="Q3" data-value="issue">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q3" value="issue" data-q="Q3" data-value="issue">
+                  <span class="shindan-option-text">更新に困る・古い情報が残る</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+              <label class="shindan-option" data-q="Q3" data-value="unknown">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q3" value="unknown" data-q="Q3" data-value="unknown">
+                  <span class="shindan-option-text">案内先がない・わからない</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+            </div>
+          </fieldset>
+        </div>
+
+        <!-- Q4 -->
+        <div class="shindan-q-panel" id="panel-Q4" data-step="Q4" data-question-panel="Q4" hidden>
+          <fieldset class="shindan-fieldset">
+            <legend class="shindan-legend" id="legend-Q4" tabindex="-1">
+              <span class="shindan-q-num" data-q-num="Q4">質問4</span>
+              Googleマップのお店情報は、現在の営業内容と合っていますか？
+            </legend>
+            <div class="shindan-options">
+              <label class="shindan-option" data-q="Q4" data-value="yes">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q4" value="yes" data-q="Q4" data-value="yes">
+                  <span class="shindan-option-text">住所・営業時間・連絡先を確認し、合っている</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+              <label class="shindan-option" data-q="Q4" data-value="issue">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q4" value="issue" data-q="Q4" data-value="issue">
+                  <span class="shindan-option-text">古い情報や不足がある</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+              <label class="shindan-option" data-q="Q4" data-value="absent">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q4" value="absent" data-q="Q4" data-value="absent">
+                  <span class="shindan-option-text">お店が表示されていない</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+              <label class="shindan-option" data-q="Q4" data-value="unknown">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q4" value="unknown" data-q="Q4" data-value="unknown">
+                  <span class="shindan-option-text">確認していない・わからない</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+            </div>
+          </fieldset>
+        </div>
+
+        <!-- Q5 -->
+        <div class="shindan-q-panel" id="panel-Q5" data-step="Q5" data-question-panel="Q5" hidden>
+          <fieldset class="shindan-fieldset">
+            <legend class="shindan-legend" id="legend-Q5" tabindex="-1">
+              <span class="shindan-q-num" data-q-num="Q5">質問5</span>
+              Instagramから、営業時間・場所・メニューの案内へ迷わず進めますか？
+            </legend>
+            <div class="shindan-options">
+              <label class="shindan-option" data-q="Q5" data-value="yes">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q5" value="yes" data-q="Q5" data-value="yes">
+                  <span class="shindan-option-text">プロフィールのリンクなどから進める</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+              <label class="shindan-option" data-q="Q5" data-value="issue">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q5" value="issue" data-q="Q5" data-value="issue">
+                  <span class="shindan-option-text">投稿を探さないとわからない・案内が不足</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+              <label class="shindan-option" data-q="Q5" data-value="unused">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q5" value="unused" data-q="Q5" data-value="unused">
+                  <span class="shindan-option-text">Instagramは使っていない</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+              <label class="shindan-option" data-q="Q5" data-value="unknown">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q5" value="unknown" data-q="Q5" data-value="unknown">
+                  <span class="shindan-option-text">わからない</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+            </div>
+          </fieldset>
+        </div>
+
+        <!-- Q6 -->
+        <div class="shindan-q-panel" id="panel-Q6" data-step="Q6" data-question-panel="Q6" hidden>
+          <fieldset class="shindan-fieldset" aria-describedby="supp-Q6">
+            <legend class="shindan-legend" id="legend-Q6" tabindex="-1">
+              <span class="shindan-q-num" data-q-num="Q6">質問6</span>
+              来店前に連絡したいお客様へ、連絡方法をわかりやすく案内していますか？
+            </legend>
+            <p class="shindan-supplement" id="supp-Q6">予約を受け付けていないお店でも、必要な問い合わせ方法があれば構いません。</p>
+            <div class="shindan-options">
+              <label class="shindan-option" data-q="Q6" data-value="yes">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q6" value="yes" data-q="Q6" data-value="yes">
+                  <span class="shindan-option-text">電話・問い合わせ・予約先などを案内している</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+              <label class="shindan-option" data-q="Q6" data-value="issue">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q6" value="issue" data-q="Q6" data-value="issue">
+                  <span class="shindan-option-text">案内しているが探しにくい・使いにくい</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+              <label class="shindan-option" data-q="Q6" data-value="absent">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q6" value="absent" data-q="Q6" data-value="absent">
+                  <span class="shindan-option-text">連絡を受けたいが案内先がない</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+              <label class="shindan-option" data-q="Q6" data-value="notneeded">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q6" value="notneeded" data-q="Q6" data-value="notneeded">
+                  <span class="shindan-option-text">事前連絡を受け付けていない</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+              <label class="shindan-option" data-q="Q6" data-value="unknown">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q6" value="unknown" data-q="Q6" data-value="unknown">
+                  <span class="shindan-option-text">わからない</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+            </div>
+          </fieldset>
+        </div>
+
+        <!-- Q7 -->
+        <div class="shindan-q-panel" id="panel-Q7" data-step="Q7" data-question-panel="Q7" hidden>
+          <fieldset class="shindan-fieldset">
+            <legend class="shindan-legend" id="legend-Q7" tabindex="-1">
+              <span class="shindan-q-num" data-q-num="Q7">質問7</span>
+              今のお店の雰囲気やメニューが伝わる写真を、Web上に載せていますか？
+            </legend>
+            <div class="shindan-options">
+              <label class="shindan-option" data-q="Q7" data-value="yes">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q7" value="yes" data-q="Q7" data-value="yes">
+                  <span class="shindan-option-text">今の外観・店内・主なメニューが伝わる</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+              <label class="shindan-option" data-q="Q7" data-value="issue">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q7" value="issue" data-q="Q7" data-value="issue">
+                  <span class="shindan-option-text">暗い・古い・一部しか伝わらない</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+              <label class="shindan-option" data-q="Q7" data-value="absent">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q7" value="absent" data-q="Q7" data-value="absent">
+                  <span class="shindan-option-text">写真を載せていない</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+              <label class="shindan-option" data-q="Q7" data-value="unknown">
+                <span class="shindan-option-main">
+                  <input type="radio" class="shindan-radio" name="Q7" value="unknown" data-q="Q7" data-value="unknown">
+                  <span class="shindan-option-text">わからない</span>
+                </span>
+                <span class="shindan-option-badge" aria-hidden="true">選択中</span>
+              </label>
+            </div>
+          </fieldset>
+        </div>
+
+        <p class="shindan-error shindan-hidden" id="question-error" role="alert" aria-live="polite" hidden>選択肢を選んでください。わからない場合も選べます</p>
+
+        <div class="shindan-nav-actions">
+          <button type="button" class="btn btn-secondary" id="btn-prev" data-action="prev">戻る</button>
+          <button type="button" class="btn btn-primary" id="btn-next" data-action="next">次へ</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 回答を見直す画面 -->
+    <section class="section shindan-step" id="step-review" data-step="review" hidden>
+      <div class="container shindan-container">
+        <span class="en-display">REVIEW</span>
+        <h2 class="shindan-heading" id="review-heading" tabindex="-1">回答を見直す</h2>
+        <p>各問の回答を変更して、結果を再計算できます。問1の回答を変更すると、ホームページの表示に関する設問の有無も自動で切り替わります。</p>
+        <div id="review-questions-container"></div>
+        <div class="btn-group">
+          <button type="button" class="btn btn-primary" id="btn-recalculate" data-action="recalculate">この内容で結果を再計算する</button>
+          <button type="button" class="btn btn-secondary" id="btn-cancel-review" data-action="cancel-review">結果画面へ戻る</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 結果画面 -->
+    <section class="section shindan-step" id="step-result" data-step="result" hidden>
+      <div class="container shindan-container">
+        <span class="en-display">RESULT</span>
+        <h2 class="shindan-heading" id="result-heading" tabindex="-1">お店のWeb案内：見直しポイント</h2>
+
+        <!-- 1. 免責文（冒頭表示） -->
+        <div class="callout-box" id="result-disclaimer">
+          <p>これは回答に基づくセルフチェックです。サイトの実測・検索順位の確認・専門家による個別調査は行っていません。</p>
+        </div>
+
+        <!-- 全体メッセージ（すべて良好／unknownのみ等の場合） -->
+        <div class="callout-box shindan-hidden" id="result-summary-banner" hidden>
+          <p id="result-summary-text"></p>
+        </div>
+
+        <!-- 2. 回答上、整っていること -->
+        <div class="shindan-result-section" id="section-good">
+          <h3>回答上、整っていること</h3>
+          <p class="note" id="good-empty-note" hidden>今回の回答では、整っていると確認できた項目はまだありません。下の見直し項目や確認手順からひとつずつ見ていきましょう。</p>
+          <ul class="shindan-good-list" id="result-good-list"></ul>
+        </div>
+
+        <!-- 3. まず見直すこと -->
+        <div class="shindan-result-section" id="section-review">
+          <h3>まず見直すこと</h3>
+          <p class="note">表示優先ルール（運営上の編集方針）：来店前の基本情報（Q3・Q4）→ 読めること・連絡できること（Q2・Q6）→ 媒体間の案内・写真（Q5・Q7）の順に提示しています。効果予測ではありません。</p>
+
+          <!-- Q1でホームページなしの場合の提案 -->
+          <div class="shindan-monitor-box shindan-hidden" id="result-no-site-advice" hidden>
+            <p id="result-no-site-text"></p>
+          </div>
+
+          <p id="review-empty-message" class="shindan-hidden" hidden></p>
+
+          <!-- 最初の表示：最大3件 -->
+          <div class="shindan-card-list" id="result-review-primary"></div>
+
+          <!-- 残り：一覧で隠さず表示 -->
+          <div class="shindan-remaining-block shindan-hidden" id="result-review-remaining-block" hidden>
+            <h4>あわせて見直したい残りの項目（一覧）</h4>
+            <p class="note">上位3件に続けて確認したい項目です。隠さずすべて表示しています。</p>
+            <div class="shindan-card-list" id="result-review-remaining"></div>
+          </div>
+        </div>
+
+        <!-- 4. まだ確認していないこと -->
+        <div class="shindan-result-section" id="section-unknown">
+          <h3>まだ確認していないこと</h3>
+          <p class="note" id="unknown-empty-note" hidden>未確認（「わからない」「まだ確認していない」）の項目はありません。</p>
+          <div class="shindan-card-list" id="result-unknown-list"></div>
+        </div>
+
+        <!-- 5. 回答一覧・コピー・回答の見直し・やり直し -->
+        <div class="shindan-result-section" id="section-actions">
+          <h3>回答内容の確認と保存</h3>
+          <div class="btn-group shindan-no-print">
+            <button type="button" class="btn btn-secondary" id="btn-copy-result" data-action="copy">結果をコピー</button>
+            <button type="button" class="btn btn-secondary" id="btn-review-answers" data-action="review">回答を見直す</button>
+            <button type="button" class="btn btn-secondary" id="btn-restart" data-action="restart">最初からやり直す</button>
+            <button type="button" class="btn btn-secondary" id="btn-print" data-action="print">印刷／PDF保存</button>
+          </div>
+
+          <div class="form-status shindan-hidden" id="copy-status" role="status" aria-live="polite" hidden></div>
+
+          <div class="shindan-copy-box shindan-hidden" id="copy-fallback-box" hidden>
+            <label class="form-label" for="copy-fallback-textarea">以下のテキストを選択してコピーしてください</label>
+            <textarea class="form-textarea" id="copy-fallback-textarea" readonly rows="8"></textarea>
+          </div>
+
+          <div class="shindan-answers-summary" id="result-answers-summary"></div>
+        </div>
+
+        <!-- 6. 無料相談CTAとモニター詳細導線 -->
+        <div class="shindan-cta-box" id="section-cta">
+          <h3>結果を踏まえて、整理や制作を検討される方へ</h3>
+          <p>自分で直すところと、制作を頼むとよさそうなところを一緒に整理します。</p>
+          <div class="btn-group">
+            <a class="btn btn-primary" id="cta-consult" href="index.html#contact">この結果について無料で相談する</a>
+          </div>
+          <p class="note">相談へ進む際は、上の「結果をコピー」を押しておくと内容を控えられます。現在は開業準備中のため、移動先の相談フォームはデモ表示です（送信されません）。</p>
+
+          <div class="shindan-monitor-box">
+            <p><strong>制作を検討している方へ。通常148,000円／モニター98,000円・先着3店。対象・協力条件・制作範囲をご確認ください。</strong></p>
+            <p class="note">表示価格は税込・買い切りです。現在は開業準備中・受付開始前です。</p>
+            <div class="btn-group" style="margin-bottom: 0;">
+              <a class="btn btn-secondary" id="cta-pricing" href="index.html#pricing">カフェ向けホームページ制作の内容を見る</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <aside class="cta-band" aria-label="ご相談案内">
+    <div class="container cta-band-inner">
+      <div class="cta-band-content">
+        <span class="en-display">LET'S TALK</span>
+        <h2>お店のこれからを、形に。</h2>
+        <p>制作内容や料金を見ながら、お店に合うホームページを考えてみませんか。</p>
+        <p class="supplement">現在は開業準備中です。フォームの入力内容は送信されません。</p>
+      </div>
+      <div class="cta-band-action">
+        <a class="btn btn-inverse" href="index.html#contact">相談フォームを見る（デモ）</a>
+      </div>
+    </div>
+  </aside>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <ul class="footer-links">
+        <li><a href="tokushoho.html">特定商取引法に基づく表記</a></li>
+      </ul>
+      <p class="copyright">© Studio Miraie</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/shindan.js"></script>
+</body>
+</html>
