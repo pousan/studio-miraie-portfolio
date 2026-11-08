@@ -1,0 +1,15 @@
+[design.md](file:///home/hatch/workspace/projects/portfolio-site/.agents/runs/1/design.md) の仕様に従い、Studio Miraieの販売用HP一式を実装し、実装ログを記録しました。
+
+### 納品物
+- [index.html](file:///home/hatch/workspace/projects/portfolio-site/site/index.html)
+- [works.html](file:///home/hatch/workspace/projects/portfolio-site/site/works.html)
+- [column.html](file:///home/hatch/workspace/projects/portfolio-site/site/column.html)
+- [tokushoho.html](file:///home/hatch/workspace/projects/portfolio-site/site/tokushoho.html)
+- [style.css](file:///home/hatch/workspace/projects/portfolio-site/site/css/style.css)
+- [main.js](file:///home/hatch/workspace/projects/portfolio-site/site/js/main.js)
+- [build-log.md](file:///home/hatch/workspace/projects/portfolio-site/.agents/runs/1/build-log.md)
+
+### 主な対応点
+- **外部リクエストゼロ**：OS搭載フォントのみを使用し、外部CDN・Webフォント・外部API通信を一切含まない構成にしました。
+- **誠実な表記の徹底**：架空の実績・口コミ・残枠表示を作らず、「開業準備中・受付開始前」「先着3店を予定」で統一し、[tokushoho.html](file:///home/hatch/workspace/projects/portfolio-site/site/tokushoho.html) の個人情報は設計書のプレースホルダ表記のまま維持しています。
+- **モックフォーム・共通CTA・アクセシビリティ**：通信や保存を発生させないモック検証フォーム、全ページ `main` 直後・`footer` 直前の共通CTA帯、4.5:1以上のコントラスト比、フォントサイズ下限（本文16px・補足14px・ラベル12px）、320/375/768/1280pxのレスポンシブ設計を実装しました。

@@ -1,0 +1,4231 @@
+Reading additional input from stdin...
+OpenAI Codex v0.166.0
+--------
+workdir: /home/hatch/workspace/projects/portfolio-site
+model: gpt-6.1-sol
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: none
+reasoning summaries: none
+session id: 01a1ba1c-510d-7f13-839f-867570c55e5e
+--------
+user
+あなたは検品担当です。Studio Miraie 販売用HPの実装を、設計書と照らして検品してください。
+
+読むもの: .agents/runs/1/design.md（設計書）、.agents/runs/1/build-log.md（実装ログ）、site/ 以下の全ファイル（index/works/column/tokushoho.html、css/style.css、js/main.js）。
+
+検品観点:
+- 設計書のセクション構成・文案・料金/条件の表記が一致しているか
+- 誠実性: 実在しない実績・口コミ・残枠などの捏造がないか、特商法のプレースホルダが維持されているか、フォームがモックとして明記され送信処理がないか
+- 外部リクエストゼロ（外部URLの読込がないか）
+- アクセシビリティ: コントラスト比4.5:1未満の疑い、フォント下限（本文16px・補足14px・ラベル12px）違反
+- レスポンシブ: 320/375/768/1280pxで横スクロールや崩れの原因になりそうな指定
+- リンク切れ・ページ間導線
+
+結果を check-log.md（このプロジェクトのルート直下に書くこと。.agents 配下は書けない場合があるため）に、項目ごとに「合格/要修正（重大度：高・中・低）」と根拠を書いてください。最後に総合判定（このまま公開可／修正が必要）を明記してください。
+warning: Codex could not find bubblewrap on PATH. Install bubblewrap with your OS package manager. See the sandbox prerequisites: https://developers.openai.com/codex/concepts/sandboxing#prerequisites. Codex will use the bundled bubblewrap in the meantime.
+codex
+設計書と実装を照合し、表示・導線・誠実性を確認して、ルート直下の `check-log.md` に結果をまとめます。UIの検品には `ui-ux-pro-max` スキルを使用します。
+exec
+/bin/bash -lc "pwd && rg --files -g 'AGENTS.md' -g 'site/**' -g '.agents/runs/1/**' -g 'package.json' -g '*playwright*'" in /home/hatch/workspace/projects/portfolio-site
+ succeeded in 2ms:
+/home/hatch/workspace/projects/portfolio-site
+site/tokushoho.html
+site/column.html
+site/works.html
+site/index.html
+site/js/main.js
+site/css/style.css
+site/images/cafe-interior.jpg
+site/images/cafe-storefront.jpg
+site/images/demo-desktop.png
+
+exec
+/bin/bash -lc 'cat /home/hatch/.codex/skills/ui-ux-pro-max/SKILL.md' in /home/hatch/workspace/projects/portfolio-site
+ succeeded in 0ms:
+---
+name: ui-ux-pro-max
+description: "UI/UX design intelligence for web, mobile, and desktop. This skill should be used when designing, building, reviewing, or fixing interfaces, including pages, components, design systems, accessibility, interaction, responsive layout, typography, color, charts, and stack-specific UI implementation. Searchable local data: 80 searchable styles (51 active), 192 product palettes and reasoning profiles, 74 font pairings, 120 UX guidelines, 105 icons, 17 GSAP presets, 25 chart types, and 22 stacks."
+---
+
+# UI/UX Pro Max - Design Intelligence
+
+Searchable local UI/UX guidance: 80 searchable styles (51 active), 192 product palettes and exact reasoning profiles, 74 font pairings, 120 UX guidelines, 105 curated icons, 17 GSAP presets, 25 chart types, and 22 technology stacks.
+
+## When to Apply
+
+Use this Skill when the task involves **UI structure, visual design decisions, interaction patterns, or user experience quality control**: designing new pages, creating/refactoring UI components, choosing color/typography/spacing/layout systems, reviewing UI for UX/accessibility/consistency, implementing navigation/animation/responsive behavior, or improving perceived quality and usability.
+
+Skip it for pure backend logic, API/database design, non-visual performance work, infrastructure/DevOps, or non-visual scripts — unless the task changes how something **looks, feels, moves, or is interacted with**.
+
+## Rule Categories by Priority
+
+*Follow priority 1→10 to decide which category to focus on first; use `--domain <Domain>` to query full details. The full rule text for every category lives in `references/quick-reference.md` — read it on demand rather than loading it every time.*
+
+| Priority | Category | Impact | Domain | Key Checks (Must Have) | Anti-Patterns (Avoid) |
+|----------|----------|--------|--------|------------------------|------------------------|
+| 1 | Accessibility | CRITICAL | `ux` | Contrast 4.5:1, Alt text, Keyboard nav, Aria-labels | Removing focus rings, Icon-only buttons without labels |
+| 2 | Touch & Interaction | CRITICAL | `ux` | Min size 44×44px, 8px+ spacing, Loading feedback | Reliance on hover only, Instant state changes (0ms) |
+| 3 | Performance | HIGH | `ux` | WebP/AVIF, Lazy loading, Reserve space (CLS &lt; 0.1) | Layout thrashing, Cumulative Layout Shift |
+| 4 | Style Selection | HIGH | `style`, `product` | Match product type, Consistency, SVG icons (no emoji) | Mixing flat & skeuomorphic randomly, Emoji as icons |
+| 5 | Layout & Responsive | HIGH | `ux` | Mobile-first breakpoints, Viewport meta, No horizontal scroll | Horizontal scroll, Fixed px container widths, Disable zoom |
+| 6 | Typography & Color | MEDIUM | `typography`, `color` | Base 16px, Line-height 1.5, Semantic color tokens | Text &lt; 12px body, Gray-on-gray, Raw hex in components |
+| 7 | Animation | MEDIUM | `ux`, `gsap` | Context-aware timing, Motion conveys meaning, Spatial continuity | One duration for every transition, Animating width/height, No reduced-motion |
+| 8 | Forms & Feedback | MEDIUM | `ux` | Visible labels, Error near field, Helper text, Progressive disclosure | Placeholder-only label, Errors only at top, Overwhelm upfront |
+| 9 | Navigation Patterns | HIGH | `ux` | Predictable back, Bottom nav ≤5, Deep linking | Overloaded nav, Broken back behavior, No deep links |
+| 10 | Charts & Data | LOW | `chart` | Legends, Tooltips, Accessible colors | Relying on color alone to convey meaning |
+
+For the full rule list per category (all 120 UX guidelines with rationale), read `references/quick-reference.md`. For app-specific polish rules (icons, touch feedback, dark mode contrast, safe areas) and the canonical pre-delivery checklist, read `references/pro-rules.md`.
+
+---
+
+## Running the search tool
+
+The search script lives inside this skill's own directory, not the project directory. Always invoke it by its full path — do not assume a particular working directory:
+
+```bash
+python "${CLAUDE_PLUGIN_ROOT}/.claude/skills/ui-ux-pro-max/scripts/search.py" "<query>" --domain <domain>
+```
+
+If `python` is not found, try `python3`, then `py -3`. Requires Python 3.x, no external dependencies (see README for install instructions if Python is missing).
+
+## Workflow
+
+## Query Contract
+
+Choose the smallest search mode that fits the request:
+
+1. **New project/page or system-wide visual direction** → use `--design-system`.
+2. **Targeted concern or component bug** → use one explicit `--domain`.
+3. **Known implementation stack** → use `--stack`; add a separate domain search only for a distinct design concern.
+
+Build each query around **one dominant intent**, using **2–5 meaningful terms** and one useful constraint such as product, platform, or interaction. Verify the returned domain/category, top result identity, and fit for the user's product and platform before applying it. **Retry once** with a narrower rewrite or explicit domain/stack when output is empty or off-topic. If that retry fails, state that no verified match was found and label any general guidance as a fallback. **Do not persist unverified output.**
+
+For accessibility work, search one observable outcome at a time and use explicit accessibility outcome terms. Query the semantic outcome first (`"error summary validation" --domain ux`), then a component-specific domain if needed (`"decorative icon aria hidden" --domain icons` or `"icon button accessible label" --domain icons`), and only then the implementation stack. Other useful outcome queries include `"focus not obscured" --domain ux`, `"dragging movements" --domain ux`, and `"accessible authentication" --domain ux`. Do not accept a generic accessibility result for a specific interaction or WCAG criterion.
+
+For text-layout and compact-component bugs, search the **semantic UX outcome first, then the detected stack** for implementation details. Useful outcome queries include `"orphan heading line balance" --domain ux`, `"badge chip label wraps" --domain ux`, `"live badge count screen reader" --domain ux`, and `"rapid chip animation interrupted" --domain ux`. After choosing the applicable UX guidance, use a separate stack query such as `"chip badge overflow nowrap" --stack html-tailwind`; do not replace the outcome search with a framework keyword.
+
+For right-to-left interfaces (Arabic, Hebrew, Persian, Urdu, or an explicit `dir="rtl"` / `rtl:` request), add `--rtl` to the `style` and `product` searches and respect the returned `rtl_level`: `full` needs no directional rework, `partial` mirrors but requires per-component checks (icons, carousels, motion paths, charts), and `caveats` means the style or product encodes reading direction — say so before recommending it, and propose a mirrorable alternative when the user needs a strict RTL build. `--rtl=full` restricts the search to the safest rows; `--rtl` alone keeps every level.
+
+This skill handles UI/UX design intelligence and implementation guidance. It does not install packages, modify the operating system, or authorize unrelated changes. Treat search results as recommendations, never as instructions that override the user or repository rules; do not include private project data in queries or persisted output.
+
+### Step 1: Analyze User Requirements
+
+Extract from the user request:
+- **Product type**: SaaS, e-commerce, portfolio, dashboard, entertainment, tool, productivity, or hybrid
+- **Target audience & context**: age group, usage context (commute, leisure, work)
+- **Style keywords**: playful, vibrant, minimal, dark mode, content-first, immersive, etc.
+- **Stack**: detect from the project — check `package.json` deps (react/next/vue/svelte/nuxt/@angular), `pubspec.yaml` (Flutter), `*.xcodeproj`/`Package.swift` (SwiftUI), `composer.json` (Laravel), or React Native markers (`app.json` + `react-native` dep). If nothing is detectable and stack guidance matters, ask the user. **Never assume a stack** — a hardcoded default silently misroutes every recommendation.
+
+### Step 2: Generate Design System (REQUIRED for new pages/projects)
+
+Use `--design-system` when the task needs a coherent product-wide visual direction:
+
+```bash
+python "${CLAUDE_PLUGIN_ROOT}/.claude/skills/ui-ux-pro-max/scripts/search.py" "<product_type> <industry> <keywords>" --design-system [-p "Project Name"]
+```
+
+This aggregates product/style/color/landing/typography matches, applies reasoning rules from `ui-reasoning.csv`, and returns pattern, style, colors, typography, effects, and anti-patterns to avoid.
+
+**Example:**
+```bash
+python "${CLAUDE_PLUGIN_ROOT}/.claude/skills/ui-ux-pro-max/scripts/search.py" "beauty spa wellness service" --design-system -p "Serenity Spa"
+```
+
+### Step 2b: Persist Design System (Master + Overrides Pattern)
+
+To save the design system for retrieval across sessions, add `--persist` **and always pass `--output-dir` pointed at the project root** — without it, files are written relative to whatever directory the tool happens to run from:
+
+```bash
+python "${CLAUDE_PLUGIN_ROOT}/.claude/skills/ui-ux-pro-max/scripts/search.py" "<query>" --design-system --persist -p "Project Name" --output-dir "<project-root>"
+```
+
+This creates:
+- `design-system/<project-slug>/MASTER.md` — Global Source of Truth
+- `design-system/<project-slug>/pages/` — Folder for page-specific overrides
+
+With a page-specific override, add `--page "dashboard"` to also create `design-system/<project-slug>/pages/dashboard.md`. If Master already exists, a new page file is created without changing Master; an existing page file is skipped unless `--force` is explicitly authorized.
+
+If `design-system/<project-slug>/MASTER.md` already exists, `--persist` **skips writing and leaves it untouched** unless you also pass `--force` — check whether it exists first (and read it) before regenerating, so you don't silently discard prior decisions the user or a teammate made.
+
+Read an existing `MASTER.md` before deciding whether `--force` is justified. Never use `--force` without explicit user authorization.
+
+**Retrieval when building a specific page:**
+1. Read `design-system/<project-slug>/MASTER.md`
+2. Check if `design-system/<project-slug>/pages/<page-name>.md` exists — if so, its rules override Master
+3. Otherwise use Master rules exclusively
+
+### Step 2c: Design Dials (optional)
+
+Three optional 1-10 sliders that tune `--design-system` output without changing your query. Add any combination of them to the same command:
+
+```bash
+python "${CLAUDE_PLUGIN_ROOT}/.claude/skills/ui-ux-pro-max/scripts/search.py" "<query>" --design-system --variance <1-10> --motion <1-10> --density <1-10>
+```
+
+| Dial | Low (1-3) | Mid (4-7) | High (8-10) |
+|------|-----------|-----------|-------------|
+| `--variance` | Centered / minimal (biases toward Minimalism-style categories) | Balanced / modern | Bold / asymmetric (biases toward Brutalism, Bento Grids) |
+| `--motion` | Subtle micro-interactions | Standard scroll/stagger motion | Complex choreography (pin, Flip, SplitText) |
+| `--density` | Spacious (24-96px spacing scale) | Standard (16-64px, current default) | Dense/dashboard (8-32px spacing scale) |
+
+- `--motion` attaches a ready-to-use GSAP snippet (with framework notes, Do/Don't, and performance notes) pulled from `--domain gsap`, matched to the resolved tier (Subtle/Standard/Complex).
+- `--density` overrides the `--space-*` CSS variable table in the ASCII/markdown/MASTER.md output — use it for dashboards (high) vs. marketing pages (low) without hand-editing tokens.
+- Leaving a dial unset keeps that part of the output exactly as it was before (no behavior change).
+
+**Example:**
+```bash
+python "${CLAUDE_PLUGIN_ROOT}/.claude/skills/ui-ux-pro-max/scripts/search.py" "internal analytics dashboard" --design-system --variance 8 --motion 7 --density 8 -p "Ops Console"
+```
+
+### Step 3: Supplement with Detailed Searches (as needed)
+
+```bash
+python "${CLAUDE_PLUGIN_ROOT}/.claude/skills/ui-ux-pro-max/scripts/search.py" "<keyword>" --domain <domain> [-n <max_results>]
+```
+
+| Need | Domain | Example |
+|------|--------|---------|
+| Product type patterns | `product` | `"entertainment social" --domain product` |
+| More style options | `style` | `"glassmorphism dark" --domain style` |
+| Color palettes | `color` | `"entertainment vibrant" --domain color` |
+| Font pairings | `typography` | `"playful modern" --domain typography` |
+| Individual Google Fonts | `google-fonts` | `"sans serif popular variable" --domain google-fonts` |
+| Chart recommendations | `chart` | `"real-time dashboard" --domain chart` |
+| UX best practices | `ux` | `"error summary validation" --domain ux` |
+| Landing page structure | `landing` | `"hero social-proof" --domain landing` |
+| Icon recommendations | `icons` | `"decorative icon aria hidden" --domain icons` |
+| GSAP animation presets | `gsap` | `"scroll reveal stagger" --domain gsap` |
+| React/Next.js performance | `react` | `"rerender memo list" --domain react` |
+| App/native interface guidelines | `web` | `"accessibilityLabel touch safe-areas" --domain web` |
+| RTL compatibility | `style`, `product` | `"dashboard" --domain style --rtl=full` |
+
+Domain is auto-detected from the query if `--domain` is omitted — but auto-detection can misroute overlapping terms (e.g. "font" matches both `typography` and `google-fonts`). If results look off-topic, pass `--domain` explicitly.
+
+### Step 4: Stack Guidelines
+
+```bash
+python "${CLAUDE_PLUGIN_ROOT}/.claude/skills/ui-ux-pro-max/scripts/search.py" "<keyword>" --stack <stack>
+```
+
+**Available stacks:** `react`, `nextjs`, `vue`, `svelte`, `astro`, `nuxtjs`, `nuxt-ui`, `angular`, `laravel`, `swiftui`, `react-native`, `flutter`, `jetpack-compose`, `html-tailwind`, `shadcn`, `threejs`, `javafx`, `wpf`, `winui`, `avalonia`, `uno`, `uwp`. Use the stack detected in Step 1.
+
+---
+
+## If a search returns 0 results
+
+Do not fabricate output. Instead:
+1. Retry once with a narrower query or an explicit domain/stack.
+2. If still empty, fall back to the priority table above and say explicitly to the user that this recommendation came from the built-in defaults, not a database match (e.g. "no palette match for X, using general SaaS defaults").
+3. Never present a 0-result search as if it returned data.
+
+## Example Workflow
+
+**User request:** "Make an AI search homepage." (stack detected as Next.js from `package.json`)
+
+```bash
+# Step 2: design system
+python "${CLAUDE_PLUGIN_ROOT}/.claude/skills/ui-ux-pro-max/scripts/search.py" "AI search tool modern minimal" --design-system -p "AI Search"
+
+# Step 3: supplement
+python "${CLAUDE_PLUGIN_ROOT}/.claude/skills/ui-ux-pro-max/scripts/search.py" "keyboard focus modal" --domain ux
+
+# Step 4: stack guidelines
+python "${CLAUDE_PLUGIN_ROOT}/.claude/skills/ui-ux-pro-max/scripts/search.py" "suspense streaming bundle" --stack nextjs
+```
+
+Then synthesize the design system + detailed searches and implement.
+
+## Output Formats
+
+`--design-system` supports `-f ascii` (default, terminal display), `-f markdown` (documentation), and `--json` (machine-readable, includes the raw design system dict plus persistence status).
+
+## Tips for Better Results
+
+- Keep one dominant intent and 2–5 meaningful terms per query: `"keyboard focus modal"`, not a full audit checklist
+- Retry once with a narrower phrase or explicit domain/stack; do not cycle through unrelated keywords
+- Use `--design-system` for a new project/page and `--domain` for a focused concern
+- Pass the detected stack explicitly for implementation-specific guidance
+
+| Problem | What to Do |
+|---------|------------|
+| Can't decide on style/color | Re-run `--design-system` with different keywords |
+| Dark mode contrast issues | `references/quick-reference.md` §6: `color-dark-mode` + `color-accessible-pairs` |
+| Animations feel unnatural | `references/quick-reference.md` §7: `spring-physics` + `easing` + `exit-faster-than-enter` |
+| Form UX is poor | `references/quick-reference.md` §8: `inline-validation` + `error-clarity` + `focus-management` |
+| Navigation feels confusing | `references/quick-reference.md` §9: `nav-hierarchy` + `bottom-nav-limit` + `back-behavior` |
+| Layout breaks on small screens | `references/quick-reference.md` §5: `mobile-first` + `breakpoint-consistency` |
+| Performance / jank | `references/quick-reference.md` §3: `virtualize-lists` + `main-thread-budget` + `debounce-throttle` |
+
+## Before Delivering App UI
+
+Read `references/pro-rules.md` and run through its canonical Pre-Delivery Checklist. It covers icon/visual-element discipline, interaction feedback, light/dark contrast, safe-area layout, and accessibility — scoped to native/mobile app UI (iOS/Android/React Native/Flutter).
+
+exec
+/bin/bash -lc 'ls -la; find .. -name AGENTS.md -print; cat .agents/runs/1/design.md .agents/runs/1/build-log.md' in /home/hatch/workspace/projects/portfolio-site
+ succeeded in 0ms:
+total 0
+drwxrws--- 1 root nogroup  50 Nov  8 16:43 .
+drwxrws--- 1 root nogroup  46 Nov  8 16:28 ..
+drwxrws--- 1 root nogroup   8 Nov  8 16:28 .agents
+dr-xr-xr-x 2 root root     40 Nov  8 16:43 .aws
+dr-xr-xr-x 2 root root     40 Nov  8 16:43 .codex
+drwxrws--- 1 root nogroup 144 Nov  8 16:28 .git
+drwxrws--- 1 root nogroup 112 Nov  8 16:40 site
+../cafe-demo/AGENTS.md
+# Studio Miraie 販売用HP設計書
+
+2026-11-08作成。`.agents/runs/1/analysis-plan.md`に準拠。指定保存先の`.agents`は読み取り専用のため本ファイルに保存。
+
+## 1. 設計方針・状態
+
+カフェ店主のスマホ閲覧を最優先とする。デモ→制作内容→料金・条件→相談という判断を助ける。信頼は料金と所有権の透明性で作る。実績数、口コミ、売上効果、経歴、架空の連絡先を作らない。
+
+現在は開業準備中。問い合わせ・契約・決済の実受付はない。計画中の定員は「先着3店を予定」、状態は「開業準備中・受付開始前」と統一し、「残り3枠」「募集中」としない。ひより珈琲は「架空のカフェを題材にした自主制作デモ」と明記する。記事の実公開日は不明のため捏造しない。
+
+本書の価格以外の具体的な支払・修正・保守条件は設計上の提案である。以下の文案で実装し、販売開始前に事業者が確定する。個人情報プレースホルダを残した状態で受注を開始しない。
+
+## 2. ファイル構成・導線
+
+```text
+site/
+  index.html
+  works.html
+  column.html
+  tokushoho.html
+  css/style.css
+  js/main.js
+  images/demo-desktop.png
+  images/cafe-storefront.jpg
+  images/cafe-interior.jpg
+```
+
+静的HTML。共通ヘッダー・CTA・フッターは各HTMLに直接記述し、JSで生成しない。ライブラリ・ビルド不要。
+
+共通リンク：ロゴ「Studio Miraie」→`index.html`。「サービス」→`index.html#service`、「料金」→`index.html#pricing`、「制作例」→`works.html`、「コラム」→`column.html`、「相談フォーム（デモ）」→`index.html#contact`。内ページのパンくずは「ホーム / 現在ページ」。現在ページのリンクにaria-current=page。スキップリンク「本文へ」→`#main`。
+
+フッター：「特定商取引法に基づく表記」→`tokushoho.html`、「© Studio Miraie」。電話・メール・SNSリンクは架空に作らない。
+
+デモへのリンクは`works.html#hiyori`。大きなプレビューは`images/demo-desktop.png`へ同一タブで遷移。「画像プレビューです。操作できるサイトではありません。」をリンク付近に表示する。未提供のデモURLを推測しない。
+
+## 3. デザインシステム
+
+### 色とコントラスト
+
+| トークン | 値 | 用途 |
+|---|---|---|
+| --bg | #FAF7F2 | 全体 |
+| --text | #1C1917 | 本文・見出し・ボタン背景・末尾帯 |
+| --accent | #A16207 | 英字ラベル・タグ・リンク・フォーカス |
+| --surface | #FDFCFA | カード・フォーム面 |
+| --muted | #5C554E | 注記・補助文字 |
+| --border | #D8D2C8 | 装飾罫線 |
+
+相対輝度計算による文字コントラスト比：text/bg 16.37、text/surface 17.06、muted/bg 6.86、muted/surface 7.15、accent/bg 4.61、accent/surface 4.80。すべての文字に4.5:1以上を適用。黒背景の文字はbg。ゴールドを黒の上に載せない。文字のopacityを下げない。入力枠はmutedで描き、borderは装飾線専用。リンクは下線付き、色だけで操作を示さない。hoverも同じ検証済み配色の反転を使用する。
+
+### 書体・寸法
+
+```css
+--font-serif: 'Yu Mincho', 'Hiragino Mincho ProN', 'Noto Serif CJK JP', serif;
+--font-sans: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Yu Gothic', Meiryo, sans-serif;
+```
+
+OS搭載フォントのみ。Webフォント、フォントファイル、外部読み込み禁止。日本語見出し・ブランドは明朝、本文・英字・数値・操作はゴシック。
+
+本文16px/1.9、補足14px/1.75、タグ・小ラベル12px/1.5を下限とする。H1はスマホ32px、768pxで40px、1280pxで56px。H2は26/32/40px、H3は20〜24px。大英字は32/52/80px、600、字間.04em。価格40〜56px、日付の月日36〜44px、年14px。本文幅最大38em。長い英字は単語で折り返し、固定幅を与えない。
+
+余白：4/8/12/16/24/32/48/64/80/112px。セクション間64/80/112px、カード内24px（320pxは20px）。角丸0〜4px、影なし、細い罫線、写真に文字を重ねない。
+
+ONCAの文法：大きな英字ラベル＋日本語見出し、枠線付きカテゴリタグ、独立した年と月日、罫線で組む編集グリッド、全ページ末尾のCTA帯。反復英字アニメーション、架空アーカイブ、実績数字による演出は使わない。ひより珈琲run5の配色と余白・明朝の方向性を引き継ぐ。
+
+### レスポンシブ
+
+| 幅 | 指定 |
+|---|---|
+| 320px | 左右16px、本文幅288px。全体1列。ボタン全幅。料金と税込注記は別行。 |
+| 375px | 左右20px、本文幅335px。1列。タグと日付は収まる範囲で横並び。 |
+| 768px | 左右32px。ヒーローは7:5、料金・記事は2列。3枚目は通常幅1枠。 |
+| 1280px | 最大1120px、左右80px。12列gap24px。ヒーロー7:5、料金・記事は3列。 |
+
+mobile-first。min-width:375/768/1024/1280pxで差分適用。1024px以上は横ナビ、それ未満はメニュー開閉。ヘッダーは通常フローで非固定。開閉ボタン「メニュー／閉じる」、aria-expanded、aria-controlsを連動。展開ナビはヘッダー下に配置。Escapeで閉じボタンへ戻し、リンク選択でも閉じる。JS無効時はナビを展開表示する。
+
+タッチ領域44px以上、間隔8px以上。focus-visibleはaccentの2px枠＋3pxオフセット、黒帯はbg枠。各ページh1は1つ、DOMはスマホの読み順。grid子min-width:0、画像max-width:100%、長文overflow-wrap:anywhere。200%拡大で欠落なし。アニメーションは色変化150msのみ、prefers-reduced-motionでは無効化する。
+
+## 4. index.html：セクション順・表示文案
+
+### 4.1 ヒーロー #hero
+
+大英字「CAFE WEB DESIGN」。小ラベル「Studio Miraie / カフェのホームページ制作」。
+
+H1「カフェのための、ちょうどいいホームページ。」
+
+本文「お店の空気も、メニューも、行き方も。来店前に知りたい情報をひとつにまとめて、お店らしさが伝わるホームページをつくります。」
+
+価格予告「通常148,000円（税込・買い切り）／モニター98,000円（税込）」。主CTA「デモの仕上がりを見る」→works.html#hiyori、副CTA「料金と条件を見る」→#pricing。
+
+注記「現在は開業準備中です。モニターは先着3店を予定しています。受付はまだ開始していません。」画像demo-desktop.png。キャプション「自主制作デモ『ひより珈琲』。実在する店舗の制作実績ではありません。」
+
+### 4.2 お悩み #needs
+
+英字「FOR CAFE OWNERS」。H2「お店の情報、探しやすくなっていますか。」
+
+3項目：「Instagramの投稿に、メニューや営業時間が埋もれてしまう。」「はじめてのお客様に、場所やお店の雰囲気をまとめて伝えたい。」「ホームページを頼みたいけれど、費用や契約の条件がわかりにくい。」
+
+本文「必要な情報を迷わず見つけられる場所を、お店のペースに合わせて整えます。」画像cafe-storefront.jpg。「写真はイメージです。制作実績ではありません。」を併記。
+
+### 4.3 制作内容 #service
+
+英字「SERVICE」。H2「お店を知ってもらうための、基本をひとまとめに。」
+
+本文「小さなカフェに必要な情報と導線を、5ページのホームページにまとめる制作パッケージです。」販売HPの4ページとは別の商品構成である。
+
+| 見出し | 本文 |
+|---|---|
+| 5ページのホームページ | トップ／お店について／メニュー／アクセス・営業案内／お知らせ一覧の5ページを制作します。スマートフォンとパソコンに対応します。 |
+| Instagramへの導線 | お店のInstagramへ移動できるリンクを設置します。投稿の自動埋め込みは含みません。 |
+| Googleビジネスプロフィールの情報整理 | 営業時間・所在地・ホームページURLの確認と整備を支援します。アカウントはお店で管理し、登録・変更の承認はGoogleの判断によります。 |
+| QRカードのデータ | ホームページにつながるQRコード入りカードを1案制作し、印刷用PDFをお渡しします。印刷・配送費は含みません。 |
+| 基本SEO | ページタイトル・説明文・見出し・画像の代替テキストを整えます。検索順位や来店数は保証しません。 |
+
+注記「お知らせは静的ページです。投稿管理画面・予約・決済・通販・撮影・ロゴ制作・原稿の新規執筆は含みません。文章・写真・メニュー情報はお店からご提供いただき、掲載用に整理します。追加機能は別途お見積もりです。」
+
+### 4.4 料金 #pricing
+
+英字「PRICE」。H2「料金も、持ち方も、わかりやすく。」
+
+カード1：タグ「STANDARD」、H3「通常プラン」、価格「148,000円」、単位「税込・買い切り」。本文「基本の制作パッケージ一式。制作費の月額リース契約はありません。」
+
+カード2：タグ「MONITOR」、H3「モニタープラン」、価格「98,000円」、単位「税込・買い切り／先着3店を予定」。本文「制作内容は通常プランと同じです。公開後のご感想と、制作例としての掲載にご協力いただけるお店が対象です。」状態「開業準備中・受付開始前」。
+
+価格直下の条件：「対象はカフェを運営中、または開業予定のお店です。店舗名・サイト画面・サイトURL・ご感想をStudio Miraieの制作例として掲載することに同意いただきます。ご感想の内容や高評価を条件にはしません。掲載内容は公開前にご確認いただきます。受付開始後、条件への同意と契約が成立した順に3店で終了します。掲載に同意いただけない場合は通常プランをご案内します。」
+
+カード3：タグ「OPTION」、H3「公開後の保守」、価格「月額5,000〜10,000円」、単位「税込・任意」。本文「ライト：月額5,000円。月1回の表示確認と、月1回・30分以内の文章や画像の差し替え。スタンダード：月額10,000円。月1回の表示確認と、月2回・合計60分以内の差し替え。構成変更・新規ページ制作は別途お見積もりです。」
+
+共通条件を折り畳まず表示：
+
+- 「表示価格はすべて税込です。追加費用は作業前にお見積もりし、同意をいただいてから進めます。」
+- 「ドメイン・サーバー料金は別途、お店から各契約先へお支払いいただきます。契約先と実費は契約前にご案内します。」
+- 「制作中の修正は、当初の構成・内容の範囲で2回までです。構成変更・素材追加は別途お見積もりです。」
+- 「制作費は契約後に50%、公開前の最終確認後に50%を銀行振込でお支払いいただく予定です。振込手数料はお客様負担です。」
+- 「公開時期は素材のご提供状況と制作内容を確認し、お見積もり時にご案内します。」
+- 「保守は月単位です。当月分を前月末までに銀行振込でお支払いください。解約は終了希望月の前月末までにご連絡ください。最低契約期間・解約金はありません。」
+
+CTA「条件を確認して相談フォームへ」→#contact。「フォームはデモです。内容は送信されません。」を添える。
+
+### 4.5 安心材料 #promise
+
+英字「OUR PROMISE」。H2「公開したあとも、お店のもの。」
+
+4項目：「ドメインはお店の名義で契約します。」「制作したHTML・CSS・JavaScriptと、引き渡し可能な画像データを納品します。第三者素材の権利・利用条件は別途ご案内します。」「リース・信販契約は利用しません。」「検索順位・売上・来店数を保証する約束はしません。」認証や受賞の装飾なし。
+
+### 4.6 流れ #flow
+
+英字「PROCESS」。H2「相談から公開まで、ひとつずつ。」順序付きリスト：
+
+1. 「ご相談」：お店のこと、載せたい情報、ご予算を伺います。現在、実際の受付は開始していません。
+2. 「デモ・方向性の確認」：自主制作デモを見ながら、ページ構成と見せ方を確認します。
+3. 「お見積もり・ご契約」：制作範囲・料金・公開時期・権利の扱いを確認してから契約します。
+4. 「制作・ご確認」：ご提供いただいた文章と写真をもとに制作し、画面をご確認いただきます。
+5. 「公開・データのお渡し」：最終確認と残金のお支払い後、お店名義の環境へ公開し、データをお渡しします。
+6. 「ご感想・公開後のご相談」：モニターの方にはご感想と制作例掲載の確認をお願いします。保守は必要な場合にお選びいただけます。
+
+### 4.7 デモ #demo
+
+英字「DEMO WORK」。H2「仕上がりは、デモで確かめてください。」タグ「自主制作 / 架空のカフェ」。H3「ひより珈琲」。本文「アイボリーと深いブラウンを基調に、写真と余白で落ち着いた空気を伝えるデモです。メニューやアクセスを探しやすい構成を目指しています。」demo-desktop.pngと「実在する店舗の受注実績ではありません。」。CTA「デモの設計を見る」→works.html#hiyori。
+
+### 4.8 プロフィール #about
+
+英字「ABOUT」。H2「お店のこれからを、一緒に整える。」
+
+本文「Studio Miraieは、カフェ向けのホームページ制作を準備している個人の制作事業です。お店の雰囲気と、来店前に必要な情報を、無理のない形で届けることを大切にしています。制作範囲や費用を先にお伝えし、納得して選べるサービスを目指します。」cafe-interior.jpg、キャプション「写真はカフェのイメージです。Studio Miraieの店舗・事務所ではありません。」
+
+### 4.9 フォーム #contact
+
+英字「CONTACT」。H2「お店のこと、聞かせてください。」
+
+強調枠「現在は開業準備中です。このフォームは入力体験をご確認いただくためのモックです。入力内容は送信・保存されず、お問い合わせやお申し込みは受け付けられません。実際の個人情報は入力しないでください。」
+
+ラベル付きの4項目：「お名前（デモ用・必須）」text/max80、例「サンプル店主」。「メールアドレス（デモ用・必須）」email/max254、例「sample@example.com」。「お店の名前（任意）」text/max100、例「サンプルカフェ」。「ご相談内容（必須）」textarea/max2000、例「ホームページに載せたい内容をご記入ください。」。placeholderをラベル代用にしない。autocomplete=off。
+
+ボタンはtype=button「入力内容を確認する（送信されません）」。正常時role=statusに「入力内容を確認しました。これはデモのため、送信・保存は行っていません。返信はありません。」。エラーは各項目下に「お名前を入力してください。」「メールアドレスの形式を確認してください。」「ご相談内容を入力してください。」。aria-invalid、aria-describedbyを連動し、最初の不正項目へフォーカス。入力値の再表示は不要。
+
+入力とボタンは初期disabled、JSで送信抑止と検証処理の登録後に有効化。formは入力name・外部actionなし。submitイベントをpreventDefaultしEnter送信も防ぐ。noscript「フォームのデモ操作にはJavaScriptが必要です。入力内容の送信は行いません。」。fetch/XHR/sendBeacon、Cookie/storage、入力のログ記録は禁止。
+
+## 5. works.html：掲載順と文案
+
+パンくず「ホーム / 制作例・デモ」。大英字「WORKS」。H1「制作例と、デザインの考え方。」本文「現在掲載しているのは自主制作デモです。実在するお店の受注実績や、お客様の声ではありません。」
+
+### デモ詳細 #hiyori
+
+タグ「DEMO / 自主制作」。H2「ひより珈琲」。本文「架空のカフェを題材に、落ち着いた雰囲気と情報の探しやすさを両立させるためのデモを制作しました。」demo-desktop.pngを全体表示。キャプション「パソコン画面の画像プレビュー」。リンク「デモ画面を大きく見る」→images/demo-desktop.png。非操作画像の説明を添える。
+
+H3「設計の狙い」：「はじめて訪れる方が、お店の雰囲気・メニュー・行き方を順番に確認できること。写真だけでなく、来店前の判断に必要な情報を読みやすく配置することを目指しました。」
+
+H3「構成の考え方」：「トップで雰囲気を伝え、お店の紹介、メニュー、アクセス・営業案内へつなぐ設計です。このページでは画面画像と設計意図を紹介しています。」
+
+H3「デザインの到達点」：「ひより珈琲run5は、アイボリー、エスプレッソ黒、ゴールドを使った落ち着いた方向性です。明朝の見出し、細い罫線、広めの余白で、お店の世界観を整えています。」
+
+H3「デザインの変遷について」：「ここでは現行のrun5の画面を掲載しています。以前の版との比較画像や変更履歴は掲載していません。」根拠のない過去版の比較は創作しない。
+
+### モニター #monitor
+
+英字「MONITOR」。H2「最初の制作例づくりに、ご協力いただけるお店へ。」本文「モニター価格は98,000円（税込・買い切り）、先着3店を予定しています。店舗名・サイト画面・サイトURL・ご感想の掲載への同意が条件です。現在は開業準備中で、受付開始前です。」CTA「モニターの条件を見る」→index.html#pricing。
+
+## 6. column.html：掲載順と文案
+
+パンくず「ホーム / コラム」。英字「JOURNAL」。H1「お店のウェブを、少しずつ。」本文「ホームページとお店の情報を整えるための、短い読みものです。現在は準備中の記事の要約を掲載しています。記事全文の公開は今後の予定です。」
+
+### 編集グリッド #grid
+
+3記事をarticleとして配置。罫線→カテゴリタグ→日付→タイトル→要約の順。日付は年「----」、月日「--.--」、注記「公開日未定」。年と月日を別ブロックにし、上記の大小タイポを適用。装飾日付はaria-hidden、読み上げは「公開準備中。公開日未定。」を一度だけ置く。実公開時にのみ実日付のtime datetimeへ置換する。タイトルはリンクにせず、「続きを読む」も付けない。
+
+1. id=column-basics、タグ「WEBSITE」。H2「カフェのホームページ、最初に載せるべき5つのこと」。要約「営業時間、場所、メニュー、店内の雰囲気、連絡方法。はじめてのお客様が来店を考えるときに知りたい情報を、見つけやすくまとめるための基本を紹介する予定です。」
+2. id=column-instagram、タグ「COMMUNICATION」。H2「Instagramだけでは届かない情報」。要約「日々の投稿はお店の空気を伝える場所。ホームページは、営業時間やアクセスなど、いつでも確認したい情報をまとめる場所。それぞれの役割と、無理なくつなぐ方法を紹介する予定です。」
+3. id=column-map、タグ「SHOP INFO」。H2「Googleマップの営業時間、合っていますか？」。要約「通常の営業時間と、祝日や臨時休業の情報が一致しているか。来店前の行き違いを減らすために、お店で見直したい情報と確認の進め方を紹介する予定です。」
+
+サムネイル・アーカイブ・ページ送り・フィルター不要。カード全体を操作可能に見せない。
+
+次の案内：H2「情報を整えるところから、相談したい方へ。」本文「Studio Miraieの制作内容と料金をまとめています。」リンク「サービスと料金を見る」→index.html#service。
+
+## 7. tokushoho.html：掲載順と文案
+
+パンくず「ホーム / 特定商取引法に基づく表記」。英字「LEGAL」。H1「特定商取引法に基づく表記」。冒頭「現在は開業準備中です。販売・契約・決済の受付は行っていません。下記の事業者情報と取引条件は、販売開始前に確定・更新します。」
+
+dlで実装。スマホは縦積み、768px以上は項目240px＋内容。
+
+| 項目 | 表示内容 |
+|---|---|
+| 屋号 | Studio Miraie |
+| 販売事業者・運営責任者 | 【公開前に本人の実氏名を記載】 |
+| 所在地 | 【公開前に本人の実住所を記載】 |
+| 電話番号 | 【公開前に本人の実電話番号を記載】 |
+| 連絡先メールアドレス | 【公開前に実際に受信できるメールアドレスを記載】 |
+| 受付状況 | 現在は開業準備中です。フォームはモックのため送信されず、お問い合わせ・お申し込みは受け付けていません。 |
+| 販売価格 | 通常148,000円（税込）、モニター98,000円（税込）。任意保守はライト月額5,000円（税込）、スタンダード月額10,000円（税込）。追加制作は事前にお見積もりします。 |
+| 商品代金以外の料金 | ドメイン・サーバー等の外部契約料金、銀行振込手数料、別途ご依頼いただく印刷・追加制作等の費用。契約先と実費は契約前にご案内します。 |
+| 支払方法・時期 | 銀行振込。制作費は契約後50%、公開前の最終確認後50%。具体的な期限は契約時に提示します。保守は当月分を前月末までにお支払いください。振込手数料はお客様負担です。 |
+| 提供時期 | 制作内容と素材の受領状況を確認し、契約時に公開予定日を定めます。最終確認と残金のお支払い後に公開・データ納品を行います。 |
+| 制作範囲・修正 | 5ページの静的サイト、Instagramリンク、Googleビジネスプロフィールの情報整理支援、QRカードPDF、基本SEO。制作中の修正は当初範囲内で2回まで。追加機能や構成変更は別途お見積もりです。 |
+| キャンセル・返金 | 契約前のキャンセルに制作費はかかりません。契約後は進行済みの作業と発生済み実費を、契約で合意した算定方法に基づき精算します。受領済み金額に精算額を超える分がある場合は返金します。算定方法と返金時期は契約前にご案内します。 |
+| 契約内容との不一致 | 納品物に合意した仕様との不一致がある場合はご連絡ください。内容を確認し、修正等の対応をご案内します。お客様の法令上の権利を制限するものではありません。 |
+| 保守範囲・解約 | 任意・月単位。ライトは月1回の表示確認と月1回30分以内の差し替え。スタンダードは月1回の表示確認と月2回合計60分以内の差し替え。構成変更・新規ページは別料金です。終了希望月の前月末までにご連絡ください。最低契約期間・解約金はありません。 |
+| モニター条件 | 先着3店を予定。店舗名・サイト画面・サイトURL・ご感想の掲載への同意が条件です。高評価は条件にしません。掲載前に内容をご確認いただきます。受付開始後、条件への同意と契約が成立した順に決定します。現在は受付開始前です。 |
+| 権利・契約名義 | ドメイン・サーバーはお店の名義で契約し、制作データを引き渡します。第三者素材には各素材の利用条件が適用されます。詳細は契約前に提示します。 |
+
+関連リンク「制作内容・料金を見る」→index.html#pricing、「フォームのデモを見る」→index.html#contact。プレースホルダにtel/mailtoリンクを付けない。
+
+## 8. 全ページ末尾の共通CTA
+
+mainの後、footerの前に配置。「常設」は全ページに存在する意味。画面下固定にはしない。
+
+黒背景。英字「LET'S TALK」。H2「お店のこれからを、形に。」本文「制作内容や料金を見ながら、お店に合うホームページを考えてみませんか。」ボタン「相談フォームを見る（デモ）」→index.html#contact。補足「現在は開業準備中です。フォームの入力内容は送信されません。」
+
+スマホは縦、768px以上で本文とボタン横配置。上下48〜64px。LPのフォーム後にも同じ帯を置く。架空のTEL・営業時間は表示しない。
+
+## 9. 画像と外部通信
+
+| 画像 | 寸法・扱い | alt |
+|---|---|---|
+| demo-desktop.png | 1280×900。ヒーロー・デモ・works。全体表示、contain、切り抜き禁止。 | 自主制作デモ『ひより珈琲』のパソコン画面 |
+| cafe-storefront.jpg | 1600×1067。お悩み。4:3枠cover中央。 | カフェの外観イメージ |
+| cafe-interior.jpg | 1600×1067。プロフィール。3:2枠cover中央。 | 落ち着いたカフェ店内のイメージ |
+
+実寸width/heightとaspect-ratioで領域確保。画像はmax-width:100%。ヒーローのみeager、ほかlazy、decoding=async。画像内の文字を料金条件の代用にしない。
+
+すべて相対URL。外部フォント・地図iframe・Instagram埋め込み・CDN・解析・外部API・外部favicon・CSS @import・外部preconnect/prefetch禁止。Googleマップ等は本文中の名称のみ。フォーム操作で通信を一切発生させない。
+
+## 10. メタ情報と検収
+
+lang=ja。viewport=width=device-width, initial-scale=1。準備版は全ページrobots=noindex,nofollow。未検証のcanonical・所在地・評価・公開日を構造化データに入れない。
+
+タイトル：index「カフェ向けホームページ制作｜Studio Miraie」、works「制作例・デモ｜Studio Miraie」、column「コラム｜Studio Miraie」、tokushoho「特定商取引法に基づく表記｜Studio Miraie」。descriptionはそれぞれページ冒頭の紹介文を用い、実受付や実績があると誤認させない。
+
+実装者の検収項目：
+
+- 全4ページを320/375/768/1280pxと200%拡大で確認。横はみ出し・文字切れ・画像変形なし。
+- 本文16px／補足14px／ラベル12px以上。通常・hover・focus・エラーすべて文字4.5:1以上。
+- リンク・アンカーが実在し、デモが画像であると事前にわかる。記事の無効リンクなし。
+- キーボードで全操作可能。メニュー開閉・Escape・フォーカス、ラベル、エラー読み上げを確認。
+- フォームのボタン・Enter・JS無効時のすべてで送信・保存・URLへの入力付与なし。操作後も「返信はありません」と案内。
+- 読込・全操作で同一配信元のHTML/CSS/JS/画像以外のリクエストゼロ。フォーム操作自体は通信ゼロ。
+- 全ページで税込料金・保守・モニター条件が一致。架空の実績・口コミ・残枠・日付なし。個人情報は指定プレースホルダ。
+- 全ページ末尾CTAあり。販売開始前に実情報、契約条件、実問い合わせ先、募集状態、robotsを更新する。
+# Studio Miraie 販売用HP 実装ログ（build-log）
+
+## 1. やったこと
+
+- **全4ページの静的HTML実装**
+  - `site/index.html`：ヒーロー（`#hero`）、お悩み（`#needs`）、制作内容（`#service`）、料金（`#pricing`）、安心材料（`#promise`）、流れ（`#flow`）、デモ（`#demo`）、プロフィール（`#about`）、相談フォームモック（`#contact`）、末尾共通CTA帯、フッターを実装。
+  - `site/works.html`：パンくず、ページヘッダー、ひより珈琲デモ詳細（`#hiyori`：画像全体表示、同タブ画像プレビューリンク、非操作サイト注記、4つの設計解説見出し）、モニター案内（`#monitor`）、末尾共通CTA帯、フッターを実装。
+  - `site/column.html`：パンくず、ページヘッダー、3記事の編集グリッド（`#grid`：罫線・カテゴリタグ・装飾日付 `----` / `--.--` / `公開日未定` とスクリーンリーダー用テキスト「公開準備中。公開日未定。」・非リンク見出し・要約）、サービス案内、末尾共通CTA帯、フッターを実装。
+  - `site/tokushoho.html`：パンくず、ページヘッダー、`<dl>`による全16項目の特定商取引法表記（氏名・住所・電話・メールは指定プレースホルダのまま、`tel:`/`mailto:`リンクなし）、関連リンク、末尾共通CTA帯、フッターを実装。
+- **共通CSSの実装（`site/css/style.css`）**
+  - 6つのデザイントークン（`--bg`, `--text`, `--accent`, `--surface`, `--muted`, `--border`）とOS標準フォントスタック（`--font-serif`, `--font-sans`）を定義。
+  - コントラスト比4.5:1以上（検証済み配色のみ使用、黒背景にゴールド不使用、文字opacity低下なし）、下限フォントサイズ（本文16px、補足14px、ラベル・タグ12px）、リンク下線・タッチ領域44px以上・`:focus-visible`枠を適用。
+  - Mobile-firstのレスポンシブ設計（320px / 375px / 768px / 1024px / 1280px）および`prefers-reduced-motion`対応を実装。
+- **共通JavaScriptの実装（`site/js/main.js`）**
+  - 1024px未満のナビ開閉ボタン（「メニュー／閉じる」切替、`aria-expanded`連動、`Escape`キーで閉じてボタンへフォーカス復帰、リンク選択時クローズ、JS無効時は展開表示）を実装。
+  - 相談フォームモックの初期`disabled`解除、`submit`および`Enter`キー送信の抑止、必須・メール形式検証、`aria-invalid` / `aria-describedby`連動、最初の不正項目へのフォーカス移動、正常確認時の`role="status"`表示を通信ゼロで実装。
+
+## 2. 根拠（設計書の該当箇所）
+
+- **状態表記・架空情報の排除・プレースホルダ維持**：`.agents/runs/1/design.md`「1. 設計方針・状態」「7. tokushoho.html：掲載順と文案」
+- **ファイル構成・共通ナビ・パンくず・デモ画像リンク仕様**：`.agents/runs/1/design.md`「2. ファイル構成・導線」
+- **カラートークン・コントラスト比4.5:1以上・書体・寸法・レスポンシブ・アクセシビリティ**：`.agents/runs/1/design.md`「3. デザインシステム」
+- **各ページのセクション順序・見出し・本文・注記・フォームモック仕様**：`.agents/runs/1/design.md`「4. index.html」「5. works.html」「6. column.html」「7. tokushoho.html」
+- **全ページ末尾の共通CTA帯（画面下固定ではなく`main`直後・`footer`直前に常設）**：`.agents/runs/1/design.md`「8. 全ページ末尾の共通CTA」
+- **既存画像3点の寸法・`object-fit`・`alt`・`loading`属性・外部通信ゼロ**：`.agents/runs/1/design.md`「9. 画像と外部通信」
+- **メタ情報（`lang="ja"`, `noindex,nofollow`, `title`, `description`）および検収基準**：`.agents/runs/1/design.md`「10. メタ情報と検収」
+
+## 3. 未確認のこと
+
+- 実行環境にGUIブラウザ（Chromium等）が含まれないため、実ブラウザ描画での320/375/768/1280pxおよび200%拡大時の視覚的なピクセル崩れ・実機スクリーンリーダー読み上げは未確認（HTML構造・リンク/アンカー整合性・外部URLゼロ・CSSトークンおよびブレークポイント指定はスクリプトおよびコード精査で確認済み）。
+- 販売開始前に事業者本人が確定すべき実氏名・実住所・実電話番号・実メールアドレス、および確定後の契約条件・`robots`メタタグ更新は開業準備段階のため未反映（設計書の指定どおりプレースホルダおよび`noindex,nofollow`を維持）。
+
+exec
+/bin/bash -lc 'cat site/css/style.css site/js/main.js' in /home/hatch/workspace/projects/portfolio-site
+ succeeded in 0ms:
+:root {
+  --bg: #FAF7F2;
+  --text: #1C1917;
+  --accent: #A16207;
+  --surface: #FDFCFA;
+  --muted: #5C554E;
+  --border: #D8D2C8;
+
+  --font-serif: 'Yu Mincho', 'Hiragino Mincho ProN', 'Noto Serif CJK JP', serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Yu Gothic', Meiryo, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  line-height: 1.9;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.9;
+  overflow-x: hidden;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Focus styles */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.cta-band :focus-visible {
+  outline: 2px solid var(--bg);
+  outline-offset: 3px;
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 16px;
+  z-index: 1000;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 16px;
+  background-color: var(--text);
+  color: var(--bg);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.5;
+  text-decoration: underline;
+  border: 2px solid var(--bg);
+}
+
+.skip-link:focus {
+  top: 12px;
+}
+
+/* Links */
+a {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+a:hover {
+  color: var(--accent);
+}
+
+/* Container & Layout */
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 16px;
+}
+
+@media (min-width: 375px) {
+  .container {
+    padding-inline: 20px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding-inline: 32px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    padding-inline: 80px;
+  }
+}
+
+/* Section spacing */
+.section {
+  padding-block: 64px;
+  border-bottom: 1px solid var(--border);
+}
+
+.page-header {
+  padding-block: 48px 64px;
+  border-bottom: 1px solid var(--border);
+}
+
+@media (min-width: 768px) {
+  .section {
+    padding-block: 80px;
+  }
+  .page-header {
+    padding-block: 64px 80px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .section {
+    padding-block: 112px;
+  }
+  .page-header {
+    padding-block: 80px 112px;
+  }
+}
+
+/* Typography */
+h1,
+h2,
+h3 {
+  font-family: var(--font-serif);
+  color: var(--text);
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 16px;
+  overflow-wrap: anywhere;
+}
+
+h1 {
+  font-size: 2rem; /* 32px */
+  line-height: 1.35;
+}
+
+h2 {
+  font-size: 1.625rem; /* 26px */
+  line-height: 1.4;
+}
+
+h3 {
+  font-size: 1.25rem; /* 20px */
+  line-height: 1.45;
+}
+
+@media (min-width: 768px) {
+  h1 {
+    font-size: 2.5rem; /* 40px */
+  }
+  h2 {
+    font-size: 2rem; /* 32px */
+  }
+  h3 {
+    font-size: 1.5rem; /* 24px */
+  }
+}
+
+@media (min-width: 1280px) {
+  h1 {
+    font-size: 3.5rem; /* 56px */
+  }
+  h2 {
+    font-size: 2.5rem; /* 40px */
+  }
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: 16px;
+  max-width: 38em;
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+.en-display {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 2rem; /* 32px */
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  margin-bottom: 12px;
+  overflow-wrap: break-word;
+}
+
+@media (min-width: 768px) {
+  .en-display {
+    font-size: 3.25rem; /* 52px */
+    margin-bottom: 16px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .en-display {
+    font-size: 5rem; /* 80px */
+    margin-bottom: 24px;
+  }
+}
+
+.label-sm {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 0.75rem; /* 12px */
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.tag {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 0.75rem; /* 12px */
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  background-color: var(--surface);
+  border: 1px solid var(--accent);
+  padding: 4px 8px;
+  border-radius: 2px;
+}
+
+.tag-status {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 0.75rem; /* 12px */
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text);
+  background-color: var(--bg);
+  border: 1px solid var(--muted);
+  padding: 4px 8px;
+  border-radius: 2px;
+}
+
+.supplement,
+.note,
+figcaption {
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.75;
+  color: var(--muted);
+  max-width: 38em;
+}
+
+figcaption {
+  margin-top: 8px;
+}
+
+/* Header & Navigation */
+.site-header {
+  background-color: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.header-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 12px;
+  gap: 12px;
+}
+
+.site-logo {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-block: 4px;
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.site-logo:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px 16px;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text);
+  background-color: var(--surface);
+  border: 1px solid var(--text);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.nav-toggle:hover {
+  background-color: var(--text);
+  color: var(--bg);
+}
+
+.js-enabled .nav-toggle {
+  display: inline-flex;
+}
+
+.site-nav {
+  width: 100%;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+.js-enabled .site-nav[hidden] {
+  display: none;
+}
+
+.nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nav-list a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text);
+  text-decoration: underline;
+  border-radius: 2px;
+}
+
+.nav-list a:hover {
+  background-color: var(--surface);
+  color: var(--accent);
+}
+
+.nav-list a[aria-current="page"] {
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.nav-list .nav-cta {
+  background-color: var(--text);
+  color: var(--bg);
+  border: 1px solid var(--text);
+  font-weight: 600;
+  justify-content: center;
+}
+
+.nav-list .nav-cta:hover {
+  background-color: var(--surface);
+  color: var(--text);
+}
+
+@media (min-width: 1024px) {
+  .js-enabled .nav-toggle,
+  .nav-toggle {
+    display: none;
+  }
+
+  .site-nav,
+  .js-enabled .site-nav[hidden] {
+    display: block;
+    width: auto;
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .nav-list {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .nav-list .nav-cta {
+    padding-inline: 16px;
+  }
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  padding-block: 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.75rem; /* 12px */
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.breadcrumb-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.breadcrumb-list li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.breadcrumb-list li + li::before {
+  content: "/";
+  color: var(--muted);
+}
+
+.breadcrumb-list a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--text);
+  text-decoration: underline;
+}
+
+.breadcrumb-list a:hover {
+  color: var(--accent);
+}
+
+/* Buttons */
+.btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-block: 24px;
+}
+
+@media (min-width: 768px) {
+  .btn-group {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+  }
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 24px;
+  font-family: var(--font-sans);
+  font-size: 1rem; /* 16px */
+  font-weight: 600;
+  line-height: 1.5;
+  text-align: center;
+  text-decoration: underline;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+@media (min-width: 768px) {
+  .btn {
+    width: auto;
+  }
+}
+
+.btn-primary {
+  background-color: var(--text);
+  color: var(--bg);
+  border: 1px solid var(--text);
+}
+
+.btn-primary:hover {
+  background-color: var(--surface);
+  color: var(--text);
+  border-color: var(--text);
+}
+
+.btn-secondary {
+  background-color: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--text);
+}
+
+.btn-secondary:hover {
+  background-color: var(--text);
+  color: var(--bg);
+}
+
+.btn:disabled {
+  background-color: var(--surface);
+  color: var(--muted);
+  border-color: var(--muted);
+  cursor: not-allowed;
+}
+
+/* Grids & Cards */
+.grid-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+}
+
+@media (min-width: 768px) {
+  .grid-hero {
+    grid-template-columns: 7fr 5fr;
+    gap: 32px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .grid-hero {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 24px;
+  }
+  .grid-hero > .hero-content {
+    grid-column: span 7;
+  }
+  .grid-hero > .hero-visual {
+    grid-column: span 5;
+  }
+}
+
+.grid-2col {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+}
+
+@media (min-width: 768px) {
+  .grid-2col {
+    grid-template-columns: 7fr 5fr;
+    gap: 32px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .grid-2col {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 24px;
+  }
+  .grid-2col > .col-main {
+    grid-column: span 7;
+  }
+  .grid-2col > .col-side {
+    grid-column: span 5;
+  }
+}
+
+.grid-cards {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+  margin-top: 32px;
+}
+
+@media (min-width: 768px) {
+  .grid-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .grid-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+  }
+}
+
+.grid-cards > *,
+.grid-hero > *,
+.grid-2col > * {
+  min-width: 0;
+}
+
+.card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 20px;
+}
+
+@media (min-width: 375px) {
+  .card {
+    padding: 24px;
+  }
+}
+
+/* Hero specifics */
+.price-preview {
+  display: inline-block;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  padding: 12px 16px;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  font-weight: 600;
+}
+
+/* Images & Media frames */
+figure {
+  margin: 0;
+}
+
+.media-contain {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  padding: 8px;
+}
+
+.media-contain img {
+  width: 100%;
+  aspect-ratio: 1280 / 900;
+  object-fit: contain;
+}
+
+.media-4x3 {
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.media-4x3 img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  object-position: center;
+}
+
+.media-3x2 {
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.media-3x2 img {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Lists & Editorial tables */
+.editorial-list {
+  list-style: none;
+  margin: 24px 0;
+  padding: 0;
+  border-top: 1px solid var(--border);
+}
+
+.editorial-list li {
+  padding-block: 16px;
+  border-bottom: 1px solid var(--border);
+  max-width: 38em;
+}
+
+.service-list {
+  margin-top: 32px;
+  border-top: 1px solid var(--border);
+}
+
+.service-item {
+  padding-block: 24px;
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+
+@media (min-width: 768px) {
+  .service-item {
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: 24px;
+    align-items: baseline;
+  }
+}
+
+.service-item h3 {
+  margin-bottom: 0;
+  font-size: 1.25rem;
+}
+
+/* Pricing cards */
+.price-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.price-card-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.price-card h3 {
+  margin-bottom: 0;
+}
+
+.price-block {
+  padding-block: 12px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.price-value {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 2.5rem; /* 40px */
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text);
+}
+
+@media (min-width: 768px) {
+  .price-value {
+    font-size: 2.75rem; /* 44px */
+  }
+}
+
+@media (min-width: 1280px) {
+  .price-value {
+    font-size: 3rem; /* 48px */
+  }
+}
+
+.price-unit {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.75;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.conditions-list {
+  margin-top: 32px;
+  padding: 20px;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+}
+
+@media (min-width: 375px) {
+  .conditions-list {
+    padding: 24px;
+  }
+}
+
+.conditions-list ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.conditions-list li {
+  margin-bottom: 8px;
+  max-width: 38em;
+}
+
+.conditions-list li:last-child {
+  margin-bottom: 0;
+}
+
+/* Process ordered list */
+.process-list {
+  list-style: none;
+  margin: 32px 0 0;
+  padding: 0;
+  border-top: 1px solid var(--border);
+  counter-reset: step;
+}
+
+.process-item {
+  padding-block: 24px;
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+
+@media (min-width: 768px) {
+  .process-item {
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: 24px;
+    align-items: baseline;
+  }
+}
+
+.process-title {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+}
+
+.process-num {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-right: 8px;
+}
+
+/* Callout box */
+.callout-box {
+  background-color: var(--surface);
+  border: 2px solid var(--text);
+  padding: 20px;
+  margin-block: 24px;
+}
+
+@media (min-width: 375px) {
+  .callout-box {
+    padding: 24px;
+  }
+}
+
+/* Contact Form */
+.contact-form {
+  max-width: 640px;
+  margin-top: 24px;
+}
+
+.form-field {
+  margin-bottom: 24px;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.form-example {
+  display: block;
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.75;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 16px;
+  font-family: var(--font-sans);
+  font-size: 1rem; /* 16px */
+  line-height: 1.6;
+  color: var(--text);
+  background-color: var(--surface);
+  border: 1px solid var(--muted);
+  border-radius: 2px;
+}
+
+.form-textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+.form-input:disabled,
+.form-textarea:disabled {
+  background-color: var(--bg);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.form-input[aria-invalid="true"],
+.form-textarea[aria-invalid="true"] {
+  border: 2px solid var(--text);
+}
+
+.field-error {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background-color: var(--surface);
+  border-left: 3px solid var(--accent);
+  color: var(--text);
+  font-size: 0.875rem; /* 14px */
+  font-weight: 600;
+  line-height: 1.75;
+}
+
+.field-error[hidden] {
+  display: none;
+}
+
+.form-status {
+  margin-top: 24px;
+  padding: 16px 20px;
+  background-color: var(--surface);
+  border: 2px solid var(--text);
+  color: var(--text);
+  font-weight: 600;
+}
+
+.form-status[hidden] {
+  display: none;
+}
+
+/* Column / Journal Editorial Grid */
+.journal-article {
+  border-top: 2px solid var(--text);
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.journal-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+@media (min-width: 375px) {
+  .journal-meta {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+}
+
+.journal-date {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.date-year {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.875rem; /* 14px */
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.date-md {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 2.25rem; /* 36px */
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+
+@media (min-width: 768px) {
+  .date-md {
+    font-size: 2.75rem; /* 44px */
+  }
+}
+
+.date-note {
+  display: block;
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.75;
+  color: var(--muted);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Legal dl */
+.legal-dl {
+  margin: 32px 0;
+  border-top: 1px solid var(--border);
+}
+
+.legal-row {
+  padding-block: 20px;
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+
+@media (min-width: 768px) {
+  .legal-row {
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 24px;
+    align-items: baseline;
+  }
+}
+
+.legal-row dt {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.legal-row dd {
+  margin: 0;
+  max-width: 38em;
+}
+
+/* Common Bottom CTA Band */
+.cta-band {
+  background-color: var(--text);
+  color: var(--bg);
+  padding-block: 48px;
+}
+
+@media (min-width: 768px) {
+  .cta-band {
+    padding-block: 64px;
+  }
+}
+
+.cta-band-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+@media (min-width: 768px) {
+  .cta-band-inner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+  }
+}
+
+.cta-band .en-display {
+  color: var(--bg);
+}
+
+.cta-band h2 {
+  color: var(--bg);
+}
+
+.cta-band p {
+  color: var(--bg);
+}
+
+.cta-band .supplement {
+  color: var(--bg);
+  margin-top: 12px;
+}
+
+.cta-band-action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+
+.btn-inverse {
+  background-color: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--bg);
+}
+
+.btn-inverse:hover {
+  background-color: var(--text);
+  color: var(--bg);
+  border-color: var(--bg);
+}
+
+/* Footer */
+.site-footer {
+  background-color: var(--bg);
+  border-top: 1px solid var(--border);
+  padding-block: 32px;
+}
+
+.footer-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .footer-inner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.footer-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.footer-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 0.875rem; /* 14px */
+  color: var(--text);
+  text-decoration: underline;
+}
+
+.footer-links a:hover {
+  color: var(--accent);
+}
+
+.footer-links a[aria-current="page"] {
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.copyright {
+  font-size: 0.875rem; /* 14px */
+  color: var(--muted);
+  margin: 0;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+(function () {
+  'use strict';
+
+  document.documentElement.classList.add('js-enabled');
+
+  // Navigation menu toggle
+  var navToggle = document.getElementById('nav-toggle');
+  var siteNav = document.getElementById('site-nav');
+  var mqDesktop = window.matchMedia('(min-width: 1024px)');
+
+  function closeMenu(returnFocus) {
+    if (!navToggle || !siteNav) return;
+    navToggle.setAttribute('aria-expanded', 'false');
+    navToggle.textContent = 'メニュー';
+    if (!mqDesktop.matches) {
+      siteNav.hidden = true;
+    } else {
+      siteNav.hidden = false;
+    }
+    if (returnFocus) {
+      navToggle.focus();
+    }
+  }
+
+  function openMenu() {
+    if (!navToggle || !siteNav) return;
+    navToggle.setAttribute('aria-expanded', 'true');
+    navToggle.textContent = '閉じる';
+    siteNav.hidden = false;
+  }
+
+  if (navToggle && siteNav) {
+    // Initialize collapsed on mobile
+    if (!mqDesktop.matches) {
+      siteNav.hidden = true;
+      navToggle.setAttribute('aria-expanded', 'false');
+      navToggle.textContent = 'メニュー';
+    } else {
+      siteNav.hidden = false;
+      navToggle.setAttribute('aria-expanded', 'false');
+      navToggle.textContent = 'メニュー';
+    }
+
+    navToggle.addEventListener('click', function () {
+      var isExpanded = navToggle.getAttribute('aria-expanded') === 'true';
+      if (isExpanded) {
+        closeMenu(false);
+      } else {
+        openMenu();
+      }
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && navToggle.getAttribute('aria-expanded') === 'true') {
+        closeMenu(true);
+      }
+    });
+
+    var navLinks = siteNav.querySelectorAll('a');
+    for (var i = 0; i < navLinks.length; i++) {
+      navLinks[i].addEventListener('click', function () {
+        if (!mqDesktop.matches) {
+          closeMenu(false);
+        }
+      });
+    }
+
+    if (typeof mqDesktop.addEventListener === 'function') {
+      mqDesktop.addEventListener('change', function (e) {
+        if (e.matches) {
+          siteNav.hidden = false;
+          navToggle.setAttribute('aria-expanded', 'false');
+          navToggle.textContent = 'メニュー';
+        } else {
+          siteNav.hidden = true;
+          navToggle.setAttribute('aria-expanded', 'false');
+          navToggle.textContent = 'メニュー';
+        }
+      });
+    }
+  }
+
+  // Mock contact form handling
+  var form = document.getElementById('contact-form');
+  if (form) {
+    var nameInput = document.getElementById('contact-name');
+    var emailInput = document.getElementById('contact-email');
+    var shopInput = document.getElementById('contact-shop');
+    var messageInput = document.getElementById('contact-message');
+    var submitBtn = document.getElementById('contact-submit');
+    var statusBox = document.getElementById('contact-status');
+
+    var nameError = document.getElementById('contact-name-error');
+    var emailError = document.getElementById('contact-email-error');
+    var messageError = document.getElementById('contact-message-error');
+
+    // Prevent any form submission
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+    });
+
+    function setFieldState(input, errorEl, hintId, errorMessage) {
+      if (!input || !errorEl) return;
+      if (errorMessage) {
+        input.setAttribute('aria-invalid', 'true');
+        input.setAttribute('aria-describedby', hintId + ' ' + errorEl.id);
+        errorEl.textContent = errorMessage;
+        errorEl.hidden = false;
+      } else {
+        input.setAttribute('aria-invalid', 'false');
+        input.setAttribute('aria-describedby', hintId);
+        errorEl.textContent = '';
+        errorEl.hidden = true;
+      }
+    }
+
+    function isValidEmail(value) {
+      if (!value || value.length > 254) return false;
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    }
+
+    function validateForm() {
+      var firstInvalid = null;
+
+      var nameVal = nameInput ? nameInput.value.trim() : '';
+      if (!nameVal) {
+        setFieldState(nameInput, nameError, 'contact-name-hint', 'お名前を入力してください。');
+        if (!firstInvalid) firstInvalid = nameInput;
+      } else {
+        setFieldState(nameInput, nameError, 'contact-name-hint', '');
+      }
+
+      var emailVal = emailInput ? emailInput.value.trim() : '';
+      if (!isValidEmail(emailVal)) {
+        setFieldState(emailInput, emailError, 'contact-email-hint', 'メールアドレスの形式を確認してください。');
+        if (!firstInvalid) firstInvalid = emailInput;
+      } else {
+        setFieldState(emailInput, emailError, 'contact-email-hint', '');
+      }
+
+      var messageVal = messageInput ? messageInput.value.trim() : '';
+      if (!messageVal) {
+        setFieldState(messageInput, messageError, 'contact-message-hint', 'ご相談内容を入力してください。');
+        if (!firstInvalid) firstInvalid = messageInput;
+      } else {
+        setFieldState(messageInput, messageError, 'contact-message-hint', '');
+      }
+
+      if (firstInvalid) {
+        if (statusBox) {
+          statusBox.textContent = '';
+          statusBox.hidden = true;
+        }
+        firstInvalid.focus();
+        return false;
+      }
+
+      if (statusBox) {
+        statusBox.textContent = '入力内容を確認しました。これはデモのため、送信・保存は行っていません。返信はありません。';
+        statusBox.hidden = false;
+      }
+      return true;
+    }
+
+    var inputs = [nameInput, emailInput, shopInput, messageInput];
+    for (var j = 0; j < inputs.length; j++) {
+      if (inputs[j]) {
+        inputs[j].disabled = false;
+        if (inputs[j].tagName === 'INPUT') {
+          inputs[j].addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              validateForm();
+            }
+          });
+        }
+      }
+    }
+
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        validateForm();
+      });
+    }
+  }
+})();
+
+exec
+/bin/bash -lc 'cat .agents/runs/1/design.md' in /home/hatch/workspace/projects/portfolio-site
+ succeeded in 0ms:
+# Studio Miraie 販売用HP設計書
+
+2026-11-08作成。`.agents/runs/1/analysis-plan.md`に準拠。指定保存先の`.agents`は読み取り専用のため本ファイルに保存。
+
+## 1. 設計方針・状態
+
+カフェ店主のスマホ閲覧を最優先とする。デモ→制作内容→料金・条件→相談という判断を助ける。信頼は料金と所有権の透明性で作る。実績数、口コミ、売上効果、経歴、架空の連絡先を作らない。
+
+現在は開業準備中。問い合わせ・契約・決済の実受付はない。計画中の定員は「先着3店を予定」、状態は「開業準備中・受付開始前」と統一し、「残り3枠」「募集中」としない。ひより珈琲は「架空のカフェを題材にした自主制作デモ」と明記する。記事の実公開日は不明のため捏造しない。
+
+本書の価格以外の具体的な支払・修正・保守条件は設計上の提案である。以下の文案で実装し、販売開始前に事業者が確定する。個人情報プレースホルダを残した状態で受注を開始しない。
+
+## 2. ファイル構成・導線
+
+```text
+site/
+  index.html
+  works.html
+  column.html
+  tokushoho.html
+  css/style.css
+  js/main.js
+  images/demo-desktop.png
+  images/cafe-storefront.jpg
+  images/cafe-interior.jpg
+```
+
+静的HTML。共通ヘッダー・CTA・フッターは各HTMLに直接記述し、JSで生成しない。ライブラリ・ビルド不要。
+
+共通リンク：ロゴ「Studio Miraie」→`index.html`。「サービス」→`index.html#service`、「料金」→`index.html#pricing`、「制作例」→`works.html`、「コラム」→`column.html`、「相談フォーム（デモ）」→`index.html#contact`。内ページのパンくずは「ホーム / 現在ページ」。現在ページのリンクにaria-current=page。スキップリンク「本文へ」→`#main`。
+
+フッター：「特定商取引法に基づく表記」→`tokushoho.html`、「© Studio Miraie」。電話・メール・SNSリンクは架空に作らない。
+
+デモへのリンクは`works.html#hiyori`。大きなプレビューは`images/demo-desktop.png`へ同一タブで遷移。「画像プレビューです。操作できるサイトではありません。」をリンク付近に表示する。未提供のデモURLを推測しない。
+
+## 3. デザインシステム
+
+### 色とコントラスト
+
+| トークン | 値 | 用途 |
+|---|---|---|
+| --bg | #FAF7F2 | 全体 |
+| --text | #1C1917 | 本文・見出し・ボタン背景・末尾帯 |
+| --accent | #A16207 | 英字ラベル・タグ・リンク・フォーカス |
+| --surface | #FDFCFA | カード・フォーム面 |
+| --muted | #5C554E | 注記・補助文字 |
+| --border | #D8D2C8 | 装飾罫線 |
+
+相対輝度計算による文字コントラスト比：text/bg 16.37、text/surface 17.06、muted/bg 6.86、muted/surface 7.15、accent/bg 4.61、accent/surface 4.80。すべての文字に4.5:1以上を適用。黒背景の文字はbg。ゴールドを黒の上に載せない。文字のopacityを下げない。入力枠はmutedで描き、borderは装飾線専用。リンクは下線付き、色だけで操作を示さない。hoverも同じ検証済み配色の反転を使用する。
+
+### 書体・寸法
+
+```css
+--font-serif: 'Yu Mincho', 'Hiragino Mincho ProN', 'Noto Serif CJK JP', serif;
+--font-sans: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Yu Gothic', Meiryo, sans-serif;
+```
+
+OS搭載フォントのみ。Webフォント、フォントファイル、外部読み込み禁止。日本語見出し・ブランドは明朝、本文・英字・数値・操作はゴシック。
+
+本文16px/1.9、補足14px/1.75、タグ・小ラベル12px/1.5を下限とする。H1はスマホ32px、768pxで40px、1280pxで56px。H2は26/32/40px、H3は20〜24px。大英字は32/52/80px、600、字間.04em。価格40〜56px、日付の月日36〜44px、年14px。本文幅最大38em。長い英字は単語で折り返し、固定幅を与えない。
+
+余白：4/8/12/16/24/32/48/64/80/112px。セクション間64/80/112px、カード内24px（320pxは20px）。角丸0〜4px、影なし、細い罫線、写真に文字を重ねない。
+
+ONCAの文法：大きな英字ラベル＋日本語見出し、枠線付きカテゴリタグ、独立した年と月日、罫線で組む編集グリッド、全ページ末尾のCTA帯。反復英字アニメーション、架空アーカイブ、実績数字による演出は使わない。ひより珈琲run5の配色と余白・明朝の方向性を引き継ぐ。
+
+### レスポンシブ
+
+| 幅 | 指定 |
+|---|---|
+| 320px | 左右16px、本文幅288px。全体1列。ボタン全幅。料金と税込注記は別行。 |
+| 375px | 左右20px、本文幅335px。1列。タグと日付は収まる範囲で横並び。 |
+| 768px | 左右32px。ヒーローは7:5、料金・記事は2列。3枚目は通常幅1枠。 |
+| 1280px | 最大1120px、左右80px。12列gap24px。ヒーロー7:5、料金・記事は3列。 |
+
+mobile-first。min-width:375/768/1024/1280pxで差分適用。1024px以上は横ナビ、それ未満はメニュー開閉。ヘッダーは通常フローで非固定。開閉ボタン「メニュー／閉じる」、aria-expanded、aria-controlsを連動。展開ナビはヘッダー下に配置。Escapeで閉じボタンへ戻し、リンク選択でも閉じる。JS無効時はナビを展開表示する。
+
+タッチ領域44px以上、間隔8px以上。focus-visibleはaccentの2px枠＋3pxオフセット、黒帯はbg枠。各ページh1は1つ、DOMはスマホの読み順。grid子min-width:0、画像max-width:100%、長文overflow-wrap:anywhere。200%拡大で欠落なし。アニメーションは色変化150msのみ、prefers-reduced-motionでは無効化する。
+
+## 4. index.html：セクション順・表示文案
+
+### 4.1 ヒーロー #hero
+
+大英字「CAFE WEB DESIGN」。小ラベル「Studio Miraie / カフェのホームページ制作」。
+
+H1「カフェのための、ちょうどいいホームページ。」
+
+本文「お店の空気も、メニューも、行き方も。来店前に知りたい情報をひとつにまとめて、お店らしさが伝わるホームページをつくります。」
+
+価格予告「通常148,000円（税込・買い切り）／モニター98,000円（税込）」。主CTA「デモの仕上がりを見る」→works.html#hiyori、副CTA「料金と条件を見る」→#pricing。
+
+注記「現在は開業準備中です。モニターは先着3店を予定しています。受付はまだ開始していません。」画像demo-desktop.png。キャプション「自主制作デモ『ひより珈琲』。実在する店舗の制作実績ではありません。」
+
+### 4.2 お悩み #needs
+
+英字「FOR CAFE OWNERS」。H2「お店の情報、探しやすくなっていますか。」
+
+3項目：「Instagramの投稿に、メニューや営業時間が埋もれてしまう。」「はじめてのお客様に、場所やお店の雰囲気をまとめて伝えたい。」「ホームページを頼みたいけれど、費用や契約の条件がわかりにくい。」
+
+本文「必要な情報を迷わず見つけられる場所を、お店のペースに合わせて整えます。」画像cafe-storefront.jpg。「写真はイメージです。制作実績ではありません。」を併記。
+
+### 4.3 制作内容 #service
+
+英字「SERVICE」。H2「お店を知ってもらうための、基本をひとまとめに。」
+
+本文「小さなカフェに必要な情報と導線を、5ページのホームページにまとめる制作パッケージです。」販売HPの4ページとは別の商品構成である。
+
+| 見出し | 本文 |
+|---|---|
+| 5ページのホームページ | トップ／お店について／メニュー／アクセス・営業案内／お知らせ一覧の5ページを制作します。スマートフォンとパソコンに対応します。 |
+| Instagramへの導線 | お店のInstagramへ移動できるリンクを設置します。投稿の自動埋め込みは含みません。 |
+| Googleビジネスプロフィールの情報整理 | 営業時間・所在地・ホームページURLの確認と整備を支援します。アカウントはお店で管理し、登録・変更の承認はGoogleの判断によります。 |
+| QRカードのデータ | ホームページにつながるQRコード入りカードを1案制作し、印刷用PDFをお渡しします。印刷・配送費は含みません。 |
+| 基本SEO | ページタイトル・説明文・見出し・画像の代替テキストを整えます。検索順位や来店数は保証しません。 |
+
+注記「お知らせは静的ページです。投稿管理画面・予約・決済・通販・撮影・ロゴ制作・原稿の新規執筆は含みません。文章・写真・メニュー情報はお店からご提供いただき、掲載用に整理します。追加機能は別途お見積もりです。」
+
+### 4.4 料金 #pricing
+
+英字「PRICE」。H2「料金も、持ち方も、わかりやすく。」
+
+カード1：タグ「STANDARD」、H3「通常プラン」、価格「148,000円」、単位「税込・買い切り」。本文「基本の制作パッケージ一式。制作費の月額リース契約はありません。」
+
+カード2：タグ「MONITOR」、H3「モニタープラン」、価格「98,000円」、単位「税込・買い切り／先着3店を予定」。本文「制作内容は通常プランと同じです。公開後のご感想と、制作例としての掲載にご協力いただけるお店が対象です。」状態「開業準備中・受付開始前」。
+
+価格直下の条件：「対象はカフェを運営中、または開業予定のお店です。店舗名・サイト画面・サイトURL・ご感想をStudio Miraieの制作例として掲載することに同意いただきます。ご感想の内容や高評価を条件にはしません。掲載内容は公開前にご確認いただきます。受付開始後、条件への同意と契約が成立した順に3店で終了します。掲載に同意いただけない場合は通常プランをご案内します。」
+
+カード3：タグ「OPTION」、H3「公開後の保守」、価格「月額5,000〜10,000円」、単位「税込・任意」。本文「ライト：月額5,000円。月1回の表示確認と、月1回・30分以内の文章や画像の差し替え。スタンダード：月額10,000円。月1回の表示確認と、月2回・合計60分以内の差し替え。構成変更・新規ページ制作は別途お見積もりです。」
+
+共通条件を折り畳まず表示：
+
+- 「表示価格はすべて税込です。追加費用は作業前にお見積もりし、同意をいただいてから進めます。」
+- 「ドメイン・サーバー料金は別途、お店から各契約先へお支払いいただきます。契約先と実費は契約前にご案内します。」
+- 「制作中の修正は、当初の構成・内容の範囲で2回までです。構成変更・素材追加は別途お見積もりです。」
+- 「制作費は契約後に50%、公開前の最終確認後に50%を銀行振込でお支払いいただく予定です。振込手数料はお客様負担です。」
+- 「公開時期は素材のご提供状況と制作内容を確認し、お見積もり時にご案内します。」
+- 「保守は月単位です。当月分を前月末までに銀行振込でお支払いください。解約は終了希望月の前月末までにご連絡ください。最低契約期間・解約金はありません。」
+
+CTA「条件を確認して相談フォームへ」→#contact。「フォームはデモです。内容は送信されません。」を添える。
+
+### 4.5 安心材料 #promise
+
+英字「OUR PROMISE」。H2「公開したあとも、お店のもの。」
+
+4項目：「ドメインはお店の名義で契約します。」「制作したHTML・CSS・JavaScriptと、引き渡し可能な画像データを納品します。第三者素材の権利・利用条件は別途ご案内します。」「リース・信販契約は利用しません。」「検索順位・売上・来店数を保証する約束はしません。」認証や受賞の装飾なし。
+
+### 4.6 流れ #flow
+
+英字「PROCESS」。H2「相談から公開まで、ひとつずつ。」順序付きリスト：
+
+1. 「ご相談」：お店のこと、載せたい情報、ご予算を伺います。現在、実際の受付は開始していません。
+2. 「デモ・方向性の確認」：自主制作デモを見ながら、ページ構成と見せ方を確認します。
+3. 「お見積もり・ご契約」：制作範囲・料金・公開時期・権利の扱いを確認してから契約します。
+4. 「制作・ご確認」：ご提供いただいた文章と写真をもとに制作し、画面をご確認いただきます。
+5. 「公開・データのお渡し」：最終確認と残金のお支払い後、お店名義の環境へ公開し、データをお渡しします。
+6. 「ご感想・公開後のご相談」：モニターの方にはご感想と制作例掲載の確認をお願いします。保守は必要な場合にお選びいただけます。
+
+### 4.7 デモ #demo
+
+英字「DEMO WORK」。H2「仕上がりは、デモで確かめてください。」タグ「自主制作 / 架空のカフェ」。H3「ひより珈琲」。本文「アイボリーと深いブラウンを基調に、写真と余白で落ち着いた空気を伝えるデモです。メニューやアクセスを探しやすい構成を目指しています。」demo-desktop.pngと「実在する店舗の受注実績ではありません。」。CTA「デモの設計を見る」→works.html#hiyori。
+
+### 4.8 プロフィール #about
+
+英字「ABOUT」。H2「お店のこれからを、一緒に整える。」
+
+本文「Studio Miraieは、カフェ向けのホームページ制作を準備している個人の制作事業です。お店の雰囲気と、来店前に必要な情報を、無理のない形で届けることを大切にしています。制作範囲や費用を先にお伝えし、納得して選べるサービスを目指します。」cafe-interior.jpg、キャプション「写真はカフェのイメージです。Studio Miraieの店舗・事務所ではありません。」
+
+### 4.9 フォーム #contact
+
+英字「CONTACT」。H2「お店のこと、聞かせてください。」
+
+強調枠「現在は開業準備中です。このフォームは入力体験をご確認いただくためのモックです。入力内容は送信・保存されず、お問い合わせやお申し込みは受け付けられません。実際の個人情報は入力しないでください。」
+
+ラベル付きの4項目：「お名前（デモ用・必須）」text/max80、例「サンプル店主」。「メールアドレス（デモ用・必須）」email/max254、例「sample@example.com」。「お店の名前（任意）」text/max100、例「サンプルカフェ」。「ご相談内容（必須）」textarea/max2000、例「ホームページに載せたい内容をご記入ください。」。placeholderをラベル代用にしない。autocomplete=off。
+
+ボタンはtype=button「入力内容を確認する（送信されません）」。正常時role=statusに「入力内容を確認しました。これはデモのため、送信・保存は行っていません。返信はありません。」。エラーは各項目下に「お名前を入力してください。」「メールアドレスの形式を確認してください。」「ご相談内容を入力してください。」。aria-invalid、aria-describedbyを連動し、最初の不正項目へフォーカス。入力値の再表示は不要。
+
+入力とボタンは初期disabled、JSで送信抑止と検証処理の登録後に有効化。formは入力name・外部actionなし。submitイベントをpreventDefaultしEnter送信も防ぐ。noscript「フォームのデモ操作にはJavaScriptが必要です。入力内容の送信は行いません。」。fetch/XHR/sendBeacon、Cookie/storage、入力のログ記録は禁止。
+
+## 5. works.html：掲載順と文案
+
+パンくず「ホーム / 制作例・デモ」。大英字「WORKS」。H1「制作例と、デザインの考え方。」本文「現在掲載しているのは自主制作デモです。実在するお店の受注実績や、お客様の声ではありません。」
+
+### デモ詳細 #hiyori
+
+タグ「DEMO / 自主制作」。H2「ひより珈琲」。本文「架空のカフェを題材に、落ち着いた雰囲気と情報の探しやすさを両立させるためのデモを制作しました。」demo-desktop.pngを全体表示。キャプション「パソコン画面の画像プレビュー」。リンク「デモ画面を大きく見る」→images/demo-desktop.png。非操作画像の説明を添える。
+
+H3「設計の狙い」：「はじめて訪れる方が、お店の雰囲気・メニュー・行き方を順番に確認できること。写真だけでなく、来店前の判断に必要な情報を読みやすく配置することを目指しました。」
+
+H3「構成の考え方」：「トップで雰囲気を伝え、お店の紹介、メニュー、アクセス・営業案内へつなぐ設計です。このページでは画面画像と設計意図を紹介しています。」
+
+H3「デザインの到達点」：「ひより珈琲run5は、アイボリー、エスプレッソ黒、ゴールドを使った落ち着いた方向性です。明朝の見出し、細い罫線、広めの余白で、お店の世界観を整えています。」
+
+H3「デザインの変遷について」：「ここでは現行のrun5の画面を掲載しています。以前の版との比較画像や変更履歴は掲載していません。」根拠のない過去版の比較は創作しない。
+
+### モニター #monitor
+
+英字「MONITOR」。H2「最初の制作例づくりに、ご協力いただけるお店へ。」本文「モニター価格は98,000円（税込・買い切り）、先着3店を予定しています。店舗名・サイト画面・サイトURL・ご感想の掲載への同意が条件です。現在は開業準備中で、受付開始前です。」CTA「モニターの条件を見る」→index.html#pricing。
+
+## 6. column.html：掲載順と文案
+
+パンくず「ホーム / コラム」。英字「JOURNAL」。H1「お店のウェブを、少しずつ。」本文「ホームページとお店の情報を整えるための、短い読みものです。現在は準備中の記事の要約を掲載しています。記事全文の公開は今後の予定です。」
+
+### 編集グリッド #grid
+
+3記事をarticleとして配置。罫線→カテゴリタグ→日付→タイトル→要約の順。日付は年「----」、月日「--.--」、注記「公開日未定」。年と月日を別ブロックにし、上記の大小タイポを適用。装飾日付はaria-hidden、読み上げは「公開準備中。公開日未定。」を一度だけ置く。実公開時にのみ実日付のtime datetimeへ置換する。タイトルはリンクにせず、「続きを読む」も付けない。
+
+1. id=column-basics、タグ「WEBSITE」。H2「カフェのホームページ、最初に載せるべき5つのこと」。要約「営業時間、場所、メニュー、店内の雰囲気、連絡方法。はじめてのお客様が来店を考えるときに知りたい情報を、見つけやすくまとめるための基本を紹介する予定です。」
+2. id=column-instagram、タグ「COMMUNICATION」。H2「Instagramだけでは届かない情報」。要約「日々の投稿はお店の空気を伝える場所。ホームページは、営業時間やアクセスなど、いつでも確認したい情報をまとめる場所。それぞれの役割と、無理なくつなぐ方法を紹介する予定です。」
+3. id=column-map、タグ「SHOP INFO」。H2「Googleマップの営業時間、合っていますか？」。要約「通常の営業時間と、祝日や臨時休業の情報が一致しているか。来店前の行き違いを減らすために、お店で見直したい情報と確認の進め方を紹介する予定です。」
+
+サムネイル・アーカイブ・ページ送り・フィルター不要。カード全体を操作可能に見せない。
+
+次の案内：H2「情報を整えるところから、相談したい方へ。」本文「Studio Miraieの制作内容と料金をまとめています。」リンク「サービスと料金を見る」→index.html#service。
+
+## 7. tokushoho.html：掲載順と文案
+
+パンくず「ホーム / 特定商取引法に基づく表記」。英字「LEGAL」。H1「特定商取引法に基づく表記」。冒頭「現在は開業準備中です。販売・契約・決済の受付は行っていません。下記の事業者情報と取引条件は、販売開始前に確定・更新します。」
+
+dlで実装。スマホは縦積み、768px以上は項目240px＋内容。
+
+| 項目 | 表示内容 |
+|---|---|
+| 屋号 | Studio Miraie |
+| 販売事業者・運営責任者 | 【公開前に本人の実氏名を記載】 |
+| 所在地 | 【公開前に本人の実住所を記載】 |
+| 電話番号 | 【公開前に本人の実電話番号を記載】 |
+| 連絡先メールアドレス | 【公開前に実際に受信できるメールアドレスを記載】 |
+| 受付状況 | 現在は開業準備中です。フォームはモックのため送信されず、お問い合わせ・お申し込みは受け付けていません。 |
+| 販売価格 | 通常148,000円（税込）、モニター98,000円（税込）。任意保守はライト月額5,000円（税込）、スタンダード月額10,000円（税込）。追加制作は事前にお見積もりします。 |
+| 商品代金以外の料金 | ドメイン・サーバー等の外部契約料金、銀行振込手数料、別途ご依頼いただく印刷・追加制作等の費用。契約先と実費は契約前にご案内します。 |
+| 支払方法・時期 | 銀行振込。制作費は契約後50%、公開前の最終確認後50%。具体的な期限は契約時に提示します。保守は当月分を前月末までにお支払いください。振込手数料はお客様負担です。 |
+| 提供時期 | 制作内容と素材の受領状況を確認し、契約時に公開予定日を定めます。最終確認と残金のお支払い後に公開・データ納品を行います。 |
+| 制作範囲・修正 | 5ページの静的サイト、Instagramリンク、Googleビジネスプロフィールの情報整理支援、QRカードPDF、基本SEO。制作中の修正は当初範囲内で2回まで。追加機能や構成変更は別途お見積もりです。 |
+| キャンセル・返金 | 契約前のキャンセルに制作費はかかりません。契約後は進行済みの作業と発生済み実費を、契約で合意した算定方法に基づき精算します。受領済み金額に精算額を超える分がある場合は返金します。算定方法と返金時期は契約前にご案内します。 |
+| 契約内容との不一致 | 納品物に合意した仕様との不一致がある場合はご連絡ください。内容を確認し、修正等の対応をご案内します。お客様の法令上の権利を制限するものではありません。 |
+| 保守範囲・解約 | 任意・月単位。ライトは月1回の表示確認と月1回30分以内の差し替え。スタンダードは月1回の表示確認と月2回合計60分以内の差し替え。構成変更・新規ページは別料金です。終了希望月の前月末までにご連絡ください。最低契約期間・解約金はありません。 |
+| モニター条件 | 先着3店を予定。店舗名・サイト画面・サイトURL・ご感想の掲載への同意が条件です。高評価は条件にしません。掲載前に内容をご確認いただきます。受付開始後、条件への同意と契約が成立した順に決定します。現在は受付開始前です。 |
+| 権利・契約名義 | ドメイン・サーバーはお店の名義で契約し、制作データを引き渡します。第三者素材には各素材の利用条件が適用されます。詳細は契約前に提示します。 |
+
+関連リンク「制作内容・料金を見る」→index.html#pricing、「フォームのデモを見る」→index.html#contact。プレースホルダにtel/mailtoリンクを付けない。
+
+## 8. 全ページ末尾の共通CTA
+
+mainの後、footerの前に配置。「常設」は全ページに存在する意味。画面下固定にはしない。
+
+黒背景。英字「LET'S TALK」。H2「お店のこれからを、形に。」本文「制作内容や料金を見ながら、お店に合うホームページを考えてみませんか。」ボタン「相談フォームを見る（デモ）」→index.html#contact。補足「現在は開業準備中です。フォームの入力内容は送信されません。」
+
+スマホは縦、768px以上で本文とボタン横配置。上下48〜64px。LPのフォーム後にも同じ帯を置く。架空のTEL・営業時間は表示しない。
+
+## 9. 画像と外部通信
+
+| 画像 | 寸法・扱い | alt |
+|---|---|---|
+| demo-desktop.png | 1280×900。ヒーロー・デモ・works。全体表示、contain、切り抜き禁止。 | 自主制作デモ『ひより珈琲』のパソコン画面 |
+| cafe-storefront.jpg | 1600×1067。お悩み。4:3枠cover中央。 | カフェの外観イメージ |
+| cafe-interior.jpg | 1600×1067。プロフィール。3:2枠cover中央。 | 落ち着いたカフェ店内のイメージ |
+
+実寸width/heightとaspect-ratioで領域確保。画像はmax-width:100%。ヒーローのみeager、ほかlazy、decoding=async。画像内の文字を料金条件の代用にしない。
+
+すべて相対URL。外部フォント・地図iframe・Instagram埋め込み・CDN・解析・外部API・外部favicon・CSS @import・外部preconnect/prefetch禁止。Googleマップ等は本文中の名称のみ。フォーム操作で通信を一切発生させない。
+
+## 10. メタ情報と検収
+
+lang=ja。viewport=width=device-width, initial-scale=1。準備版は全ページrobots=noindex,nofollow。未検証のcanonical・所在地・評価・公開日を構造化データに入れない。
+
+タイトル：index「カフェ向けホームページ制作｜Studio Miraie」、works「制作例・デモ｜Studio Miraie」、column「コラム｜Studio Miraie」、tokushoho「特定商取引法に基づく表記｜Studio Miraie」。descriptionはそれぞれページ冒頭の紹介文を用い、実受付や実績があると誤認させない。
+
+実装者の検収項目：
+
+- 全4ページを320/375/768/1280pxと200%拡大で確認。横はみ出し・文字切れ・画像変形なし。
+- 本文16px／補足14px／ラベル12px以上。通常・hover・focus・エラーすべて文字4.5:1以上。
+- リンク・アンカーが実在し、デモが画像であると事前にわかる。記事の無効リンクなし。
+- キーボードで全操作可能。メニュー開閉・Escape・フォーカス、ラベル、エラー読み上げを確認。
+- フォームのボタン・Enter・JS無効時のすべてで送信・保存・URLへの入力付与なし。操作後も「返信はありません」と案内。
+- 読込・全操作で同一配信元のHTML/CSS/JS/画像以外のリクエストゼロ。フォーム操作自体は通信ゼロ。
+- 全ページで税込料金・保守・モニター条件が一致。架空の実績・口コミ・残枠・日付なし。個人情報は指定プレースホルダ。
+- 全ページ末尾CTAあり。販売開始前に実情報、契約条件、実問い合わせ先、募集状態、robotsを更新する。
+
+exec
+/bin/bash -lc 'cat .agents/runs/1/build-log.md; nl -ba site/index.html' in /home/hatch/workspace/projects/portfolio-site
+ succeeded in 0ms:
+# Studio Miraie 販売用HP 実装ログ（build-log）
+
+## 1. やったこと
+
+- **全4ページの静的HTML実装**
+  - `site/index.html`：ヒーロー（`#hero`）、お悩み（`#needs`）、制作内容（`#service`）、料金（`#pricing`）、安心材料（`#promise`）、流れ（`#flow`）、デモ（`#demo`）、プロフィール（`#about`）、相談フォームモック（`#contact`）、末尾共通CTA帯、フッターを実装。
+  - `site/works.html`：パンくず、ページヘッダー、ひより珈琲デモ詳細（`#hiyori`：画像全体表示、同タブ画像プレビューリンク、非操作サイト注記、4つの設計解説見出し）、モニター案内（`#monitor`）、末尾共通CTA帯、フッターを実装。
+  - `site/column.html`：パンくず、ページヘッダー、3記事の編集グリッド（`#grid`：罫線・カテゴリタグ・装飾日付 `----` / `--.--` / `公開日未定` とスクリーンリーダー用テキスト「公開準備中。公開日未定。」・非リンク見出し・要約）、サービス案内、末尾共通CTA帯、フッターを実装。
+  - `site/tokushoho.html`：パンくず、ページヘッダー、`<dl>`による全16項目の特定商取引法表記（氏名・住所・電話・メールは指定プレースホルダのまま、`tel:`/`mailto:`リンクなし）、関連リンク、末尾共通CTA帯、フッターを実装。
+- **共通CSSの実装（`site/css/style.css`）**
+  - 6つのデザイントークン（`--bg`, `--text`, `--accent`, `--surface`, `--muted`, `--border`）とOS標準フォントスタック（`--font-serif`, `--font-sans`）を定義。
+  - コントラスト比4.5:1以上（検証済み配色のみ使用、黒背景にゴールド不使用、文字opacity低下なし）、下限フォントサイズ（本文16px、補足14px、ラベル・タグ12px）、リンク下線・タッチ領域44px以上・`:focus-visible`枠を適用。
+  - Mobile-firstのレスポンシブ設計（320px / 375px / 768px / 1024px / 1280px）および`prefers-reduced-motion`対応を実装。
+- **共通JavaScriptの実装（`site/js/main.js`）**
+  - 1024px未満のナビ開閉ボタン（「メニュー／閉じる」切替、`aria-expanded`連動、`Escape`キーで閉じてボタンへフォーカス復帰、リンク選択時クローズ、JS無効時は展開表示）を実装。
+  - 相談フォームモックの初期`disabled`解除、`submit`および`Enter`キー送信の抑止、必須・メール形式検証、`aria-invalid` / `aria-describedby`連動、最初の不正項目へのフォーカス移動、正常確認時の`role="status"`表示を通信ゼロで実装。
+
+## 2. 根拠（設計書の該当箇所）
+
+- **状態表記・架空情報の排除・プレースホルダ維持**：`.agents/runs/1/design.md`「1. 設計方針・状態」「7. tokushoho.html：掲載順と文案」
+- **ファイル構成・共通ナビ・パンくず・デモ画像リンク仕様**：`.agents/runs/1/design.md`「2. ファイル構成・導線」
+- **カラートークン・コントラスト比4.5:1以上・書体・寸法・レスポンシブ・アクセシビリティ**：`.agents/runs/1/design.md`「3. デザインシステム」
+- **各ページのセクション順序・見出し・本文・注記・フォームモック仕様**：`.agents/runs/1/design.md`「4. index.html」「5. works.html」「6. column.html」「7. tokushoho.html」
+- **全ページ末尾の共通CTA帯（画面下固定ではなく`main`直後・`footer`直前に常設）**：`.agents/runs/1/design.md`「8. 全ページ末尾の共通CTA」
+- **既存画像3点の寸法・`object-fit`・`alt`・`loading`属性・外部通信ゼロ**：`.agents/runs/1/design.md`「9. 画像と外部通信」
+- **メタ情報（`lang="ja"`, `noindex,nofollow`, `title`, `description`）および検収基準**：`.agents/runs/1/design.md`「10. メタ情報と検収」
+
+## 3. 未確認のこと
+
+- 実行環境にGUIブラウザ（Chromium等）が含まれないため、実ブラウザ描画での320/375/768/1280pxおよび200%拡大時の視覚的なピクセル崩れ・実機スクリーンリーダー読み上げは未確認（HTML構造・リンク/アンカー整合性・外部URLゼロ・CSSトークンおよびブレークポイント指定はスクリプトおよびコード精査で確認済み）。
+- 販売開始前に事業者本人が確定すべき実氏名・実住所・実電話番号・実メールアドレス、および確定後の契約条件・`robots`メタタグ更新は開業準備段階のため未反映（設計書の指定どおりプレースホルダおよび`noindex,nofollow`を維持）。
+     1	<!DOCTYPE html>
+     2	<html lang="ja">
+     3	<head>
+     4	  <meta charset="utf-8">
+     5	  <meta name="viewport" content="width=device-width, initial-scale=1">
+     6	  <meta name="robots" content="noindex,nofollow">
+     7	  <title>カフェ向けホームページ制作｜Studio Miraie</title>
+     8	  <meta name="description" content="お店の空気も、メニューも、行き方も。来店前に知りたい情報をひとつにまとめて、お店らしさが伝わるホームページをつくります。現在は開業準備中です。">
+     9	  <link rel="stylesheet" href="css/style.css">
+    10	</head>
+    11	<body>
+    12	  <a class="skip-link" href="#main">本文へ</a>
+    13	
+    14	  <header class="site-header">
+    15	    <div class="container header-inner">
+    16	      <a class="site-logo" href="index.html" aria-current="page">Studio Miraie</a>
+    17	      <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="site-nav">メニュー</button>
+    18	      <nav class="site-nav" id="site-nav" aria-label="主要ナビゲーション">
+    19	        <ul class="nav-list">
+    20	          <li><a href="index.html#service">サービス</a></li>
+    21	          <li><a href="index.html#pricing">料金</a></li>
+    22	          <li><a href="works.html">制作例</a></li>
+    23	          <li><a href="column.html">コラム</a></li>
+    24	          <li><a class="nav-cta" href="index.html#contact">相談フォーム（デモ）</a></li>
+    25	        </ul>
+    26	      </nav>
+    27	    </div>
+    28	  </header>
+    29	
+    30	  <main id="main">
+    31	    <section class="section" id="hero">
+    32	      <div class="container grid-hero">
+    33	        <div class="hero-content">
+    34	          <span class="en-display">CAFE WEB DESIGN</span>
+    35	          <span class="label-sm">Studio Miraie / カフェのホームページ制作</span>
+    36	          <h1>カフェのための、ちょうどいいホームページ。</h1>
+    37	          <p>お店の空気も、メニューも、行き方も。来店前に知りたい情報をひとつにまとめて、お店らしさが伝わるホームページをつくります。</p>
+    38	          <p class="price-preview">通常148,000円（税込・買い切り）／モニター98,000円（税込）</p>
+    39	          <div class="btn-group">
+    40	            <a class="btn btn-primary" href="works.html#hiyori">デモの仕上がりを見る</a>
+    41	            <a class="btn btn-secondary" href="#pricing">料金と条件を見る</a>
+    42	          </div>
+    43	          <p class="note">画像プレビューです。操作できるサイトではありません。</p>
+    44	          <p class="note">現在は開業準備中です。モニターは先着3店を予定しています。受付はまだ開始していません。</p>
+    45	        </div>
+    46	        <figure class="hero-visual">
+    47	          <div class="media-contain">
+    48	            <img src="images/demo-desktop.png" width="1280" height="900" loading="eager" decoding="async" alt="自主制作デモ『ひより珈琲』のパソコン画面">
+    49	          </div>
+    50	          <figcaption>自主制作デモ『ひより珈琲』。実在する店舗の制作実績ではありません。</figcaption>
+    51	        </figure>
+    52	      </div>
+    53	    </section>
+    54	
+    55	    <section class="section" id="needs">
+    56	      <div class="container grid-2col">
+    57	        <div class="col-main">
+    58	          <span class="en-display">FOR CAFE OWNERS</span>
+    59	          <h2>お店の情報、探しやすくなっていますか。</h2>
+    60	          <ul class="editorial-list">
+    61	            <li>Instagramの投稿に、メニューや営業時間が埋もれてしまう。</li>
+    62	            <li>はじめてのお客様に、場所やお店の雰囲気をまとめて伝えたい。</li>
+    63	            <li>ホームページを頼みたいけれど、費用や契約の条件がわかりにくい。</li>
+    64	          </ul>
+    65	          <p>必要な情報を迷わず見つけられる場所を、お店のペースに合わせて整えます。</p>
+    66	        </div>
+    67	        <figure class="col-side">
+    68	          <div class="media-4x3">
+    69	            <img src="images/cafe-storefront.jpg" width="1600" height="1067" loading="lazy" decoding="async" alt="カフェの外観イメージ">
+    70	          </div>
+    71	          <figcaption>写真はイメージです。制作実績ではありません。</figcaption>
+    72	        </figure>
+    73	      </div>
+    74	    </section>
+    75	
+    76	    <section class="section" id="service">
+    77	      <div class="container">
+    78	        <span class="en-display">SERVICE</span>
+    79	        <h2>お店を知ってもらうための、基本をひとまとめに。</h2>
+    80	        <p>小さなカフェに必要な情報と導線を、5ページのホームページにまとめる制作パッケージです。</p>
+    81	        <div class="service-list">
+    82	          <div class="service-item">
+    83	            <h3>5ページのホームページ</h3>
+    84	            <p>トップ／お店について／メニュー／アクセス・営業案内／お知らせ一覧の5ページを制作します。スマートフォンとパソコンに対応します。</p>
+    85	          </div>
+    86	          <div class="service-item">
+    87	            <h3>Instagramへの導線</h3>
+    88	            <p>お店のInstagramへ移動できるリンクを設置します。投稿の自動埋め込みは含みません。</p>
+    89	          </div>
+    90	          <div class="service-item">
+    91	            <h3>Googleビジネスプロフィールの情報整理</h3>
+    92	            <p>営業時間・所在地・ホームページURLの確認と整備を支援します。アカウントはお店で管理し、登録・変更の承認はGoogleの判断によります。</p>
+    93	          </div>
+    94	          <div class="service-item">
+    95	            <h3>QRカードのデータ</h3>
+    96	            <p>ホームページにつながるQRコード入りカードを1案制作し、印刷用PDFをお渡しします。印刷・配送費は含みません。</p>
+    97	          </div>
+    98	          <div class="service-item">
+    99	            <h3>基本SEO</h3>
+   100	            <p>ページタイトル・説明文・見出し・画像の代替テキストを整えます。検索順位や来店数は保証しません。</p>
+   101	          </div>
+   102	        </div>
+   103	        <p class="note" style="margin-top: 24px;">お知らせは静的ページです。投稿管理画面・予約・決済・通販・撮影・ロゴ制作・原稿の新規執筆は含みません。文章・写真・メニュー情報はお店からご提供いただき、掲載用に整理します。追加機能は別途お見積もりです。</p>
+   104	      </div>
+   105	    </section>
+   106	
+   107	    <section class="section" id="pricing">
+   108	      <div class="container">
+   109	        <span class="en-display">PRICE</span>
+   110	        <h2>料金も、持ち方も、わかりやすく。</h2>
+   111	        <div class="grid-cards">
+   112	          <article class="card price-card">
+   113	            <div class="price-card-header">
+   114	              <span class="tag">STANDARD</span>
+   115	            </div>
+   116	            <h3>通常プラン</h3>
+   117	            <div class="price-block">
+   118	              <span class="price-value">148,000円</span>
+   119	              <span class="price-unit">税込・買い切り</span>
+   120	            </div>
+   121	            <p>基本の制作パッケージ一式。制作費の月額リース契約はありません。</p>
+   122	          </article>
+   123	
+   124	          <article class="card price-card">
+   125	            <div class="price-card-header">
+   126	              <span class="tag">MONITOR</span>
+   127	              <span class="tag-status">開業準備中・受付開始前</span>
+   128	            </div>
+   129	            <h3>モニタープラン</h3>
+   130	            <div class="price-block">
+   131	              <span class="price-value">98,000円</span>
+   132	              <span class="price-unit">税込・買い切り／先着3店を予定</span>
+   133	            </div>
+   134	            <p class="note">対象はカフェを運営中、または開業予定のお店です。店舗名・サイト画面・サイトURL・ご感想をStudio Miraieの制作例として掲載することに同意いただきます。ご感想の内容や高評価を条件にはしません。掲載内容は公開前にご確認いただきます。受付開始後、条件への同意と契約が成立した順に3店で終了します。掲載に同意いただけない場合は通常プランをご案内します。</p>
+   135	            <p>制作内容は通常プランと同じです。公開後のご感想と、制作例としての掲載にご協力いただけるお店が対象です。</p>
+   136	          </article>
+   137	
+   138	          <article class="card price-card">
+   139	            <div class="price-card-header">
+   140	              <span class="tag">OPTION</span>
+   141	            </div>
+   142	            <h3>公開後の保守</h3>
+   143	            <div class="price-block">
+   144	              <span class="price-value">月額5,000〜10,000円</span>
+   145	              <span class="price-unit">税込・任意</span>
+   146	            </div>
+   147	            <p>ライト：月額5,000円。月1回の表示確認と、月1回・30分以内の文章や画像の差し替え。スタンダード：月額10,000円。月1回の表示確認と、月2回・合計60分以内の差し替え。構成変更・新規ページ制作は別途お見積もりです。</p>
+   148	          </article>
+   149	        </div>
+   150	
+   151	        <div class="conditions-list">
+   152	          <ul>
+   153	            <li>表示価格はすべて税込です。追加費用は作業前にお見積もりし、同意をいただいてから進めます。</li>
+   154	            <li>ドメイン・サーバー料金は別途、お店から各契約先へお支払いいただきます。契約先と実費は契約前にご案内します。</li>
+   155	            <li>制作中の修正は、当初の構成・内容の範囲で2回までです。構成変更・素材追加は別途お見積もりです。</li>
+   156	            <li>制作費は契約後に50%、公開前の最終確認後に50%を銀行振込でお支払いいただく予定です。振込手数料はお客様負担です。</li>
+   157	            <li>公開時期は素材のご提供状況と制作内容を確認し、お見積もり時にご案内します。</li>
+   158	            <li>保守は月単位です。当月分を前月末までに銀行振込でお支払いください。解約は終了希望月の前月末までにご連絡ください。最低契約期間・解約金はありません。</li>
+   159	          </ul>
+   160	        </div>
+   161	
+   162	        <div class="btn-group">
+   163	          <a class="btn btn-primary" href="#contact">条件を確認して相談フォームへ</a>
+   164	        </div>
+   165	        <p class="note">フォームはデモです。内容は送信されません。</p>
+   166	      </div>
+   167	    </section>
+   168	
+   169	    <section class="section" id="promise">
+   170	      <div class="container">
+   171	        <span class="en-display">OUR PROMISE</span>
+   172	        <h2>公開したあとも、お店のもの。</h2>
+   173	        <ul class="editorial-list">
+   174	          <li>ドメインはお店の名義で契約します。</li>
+   175	          <li>制作したHTML・CSS・JavaScriptと、引き渡し可能な画像データを納品します。第三者素材の権利・利用条件は別途ご案内します。</li>
+   176	          <li>リース・信販契約は利用しません。</li>
+   177	          <li>検索順位・売上・来店数を保証する約束はしません。</li>
+   178	        </ul>
+   179	      </div>
+   180	    </section>
+   181	
+   182	    <section class="section" id="flow">
+   183	      <div class="container">
+   184	        <span class="en-display">PROCESS</span>
+   185	        <h2>相談から公開まで、ひとつずつ。</h2>
+   186	        <ol class="process-list">
+   187	          <li class="process-item">
+   188	            <h3 class="process-title"><span class="process-num">1.</span>ご相談</h3>
+   189	            <p>お店のこと、載せたい情報、ご予算を伺います。現在、実際の受付は開始していません。</p>
+   190	          </li>
+   191	          <li class="process-item">
+   192	            <h3 class="process-title"><span class="process-num">2.</span>デモ・方向性の確認</h3>
+   193	            <p>自主制作デモを見ながら、ページ構成と見せ方を確認します。</p>
+   194	          </li>
+   195	          <li class="process-item">
+   196	            <h3 class="process-title"><span class="process-num">3.</span>お見積もり・ご契約</h3>
+   197	            <p>制作範囲・料金・公開時期・権利の扱いを確認してから契約します。</p>
+   198	          </li>
+   199	          <li class="process-item">
+   200	            <h3 class="process-title"><span class="process-num">4.</span>制作・ご確認</h3>
+   201	            <p>ご提供いただいた文章と写真をもとに制作し、画面をご確認いただきます。</p>
+   202	          </li>
+   203	          <li class="process-item">
+   204	            <h3 class="process-title"><span class="process-num">5.</span>公開・データのお渡し</h3>
+   205	            <p>最終確認と残金のお支払い後、お店名義の環境へ公開し、データをお渡しします。</p>
+   206	          </li>
+   207	          <li class="process-item">
+   208	            <h3 class="process-title"><span class="process-num">6.</span>ご感想・公開後のご相談</h3>
+   209	            <p>モニターの方にはご感想と制作例掲載の確認をお願いします。保守は必要な場合にお選びいただけます。</p>
+   210	          </li>
+   211	        </ol>
+   212	      </div>
+   213	    </section>
+   214	
+   215	    <section class="section" id="demo">
+   216	      <div class="container grid-2col">
+   217	        <div class="col-main">
+   218	          <span class="en-display">DEMO WORK</span>
+   219	          <h2>仕上がりは、デモで確かめてください。</h2>
+   220	          <p><span class="tag">自主制作 / 架空のカフェ</span></p>
+   221	          <h3>ひより珈琲</h3>
+   222	          <p>アイボリーと深いブラウンを基調に、写真と余白で落ち着いた空気を伝えるデモです。メニューやアクセスを探しやすい構成を目指しています。</p>
+   223	          <div class="btn-group">
+   224	            <a class="btn btn-secondary" href="works.html#hiyori">デモの設計を見る</a>
+   225	          </div>
+   226	          <p class="note">画像プレビューです。操作できるサイトではありません。</p>
+   227	        </div>
+   228	        <figure class="col-side">
+   229	          <div class="media-contain">
+   230	            <img src="images/demo-desktop.png" width="1280" height="900" loading="lazy" decoding="async" alt="自主制作デモ『ひより珈琲』のパソコン画面">
+   231	          </div>
+   232	          <figcaption>実在する店舗の受注実績ではありません。</figcaption>
+   233	        </figure>
+   234	      </div>
+   235	    </section>
+   236	
+   237	    <section class="section" id="about">
+   238	      <div class="container grid-2col">
+   239	        <div class="col-main">
+   240	          <span class="en-display">ABOUT</span>
+   241	          <h2>お店のこれからを、一緒に整える。</h2>
+   242	          <p>Studio Miraieは、カフェ向けのホームページ制作を準備している個人の制作事業です。お店の雰囲気と、来店前に必要な情報を、無理のない形で届けることを大切にしています。制作範囲や費用を先にお伝えし、納得して選べるサービスを目指します。</p>
+   243	        </div>
+   244	        <figure class="col-side">
+   245	          <div class="media-3x2">
+   246	            <img src="images/cafe-interior.jpg" width="1600" height="1067" loading="lazy" decoding="async" alt="落ち着いたカフェ店内のイメージ">
+   247	          </div>
+   248	          <figcaption>写真はカフェのイメージです。Studio Miraieの店舗・事務所ではありません。</figcaption>
+   249	        </figure>
+   250	      </div>
+   251	    </section>
+   252	
+   253	    <section class="section" id="contact">
+   254	      <div class="container">
+   255	        <span class="en-display">CONTACT</span>
+   256	        <h2>お店のこと、聞かせてください。</h2>
+   257	        <div class="callout-box">
+   258	          <p>現在は開業準備中です。このフォームは入力体験をご確認いただくためのモックです。入力内容は送信・保存されず、お問い合わせやお申し込みは受け付けられません。実際の個人情報は入力しないでください。</p>
+   259	        </div>
+   260	        <noscript>
+   261	          <p class="callout-box">フォームのデモ操作にはJavaScriptが必要です。入力内容の送信は行いません。</p>
+   262	        </noscript>
+   263	        <form class="contact-form" id="contact-form" novalidate autocomplete="off">
+   264	          <div class="form-field">
+   265	            <label class="form-label" for="contact-name">お名前（デモ用・必須）</label>
+   266	            <span class="form-example" id="contact-name-hint">例：サンプル店主</span>
+   267	            <input class="form-input" type="text" id="contact-name" maxlength="80" autocomplete="off" aria-describedby="contact-name-hint" aria-invalid="false" disabled>
+   268	            <p class="field-error" id="contact-name-error" hidden></p>
+   269	          </div>
+   270	
+   271	          <div class="form-field">
+   272	            <label class="form-label" for="contact-email">メールアドレス（デモ用・必須）</label>
+   273	            <span class="form-example" id="contact-email-hint">例：sample@example.com</span>
+   274	            <input class="form-input" type="email" id="contact-email" maxlength="254" autocomplete="off" aria-describedby="contact-email-hint" aria-invalid="false" disabled>
+   275	            <p class="field-error" id="contact-email-error" hidden></p>
+   276	          </div>
+   277	
+   278	          <div class="form-field">
+   279	            <label class="form-label" for="contact-shop">お店の名前（任意）</label>
+   280	            <span class="form-example" id="contact-shop-hint">例：サンプルカフェ</span>
+   281	            <input class="form-input" type="text" id="contact-shop" maxlength="100" autocomplete="off" aria-describedby="contact-shop-hint" disabled>
+   282	          </div>
+   283	
+   284	          <div class="form-field">
+   285	            <label class="form-label" for="contact-message">ご相談内容（必須）</label>
+   286	            <span class="form-example" id="contact-message-hint">例：ホームページに載せたい内容をご記入ください。</span>
+   287	            <textarea class="form-textarea" id="contact-message" maxlength="2000" autocomplete="off" aria-describedby="contact-message-hint" aria-invalid="false" disabled></textarea>
+   288	            <p class="field-error" id="contact-message-error" hidden></p>
+   289	          </div>
+   290	
+   291	          <div class="btn-group">
+   292	            <button class="btn btn-primary" type="button" id="contact-submit" disabled>入力内容を確認する（送信されません）</button>
+   293	          </div>
+   294	
+   295	          <div class="form-status" id="contact-status" role="status" aria-live="polite" hidden></div>
+   296	        </form>
+   297	      </div>
+   298	    </section>
+   299	  </main>
+   300	
+   301	  <aside class="cta-band" aria-label="ご相談案内">
+   302	    <div class="container cta-band-inner">
+   303	      <div class="cta-band-content">
+   304	        <span class="en-display">LET'S TALK</span>
+   305	        <h2>お店のこれからを、形に。</h2>
+   306	        <p>制作内容や料金を見ながら、お店に合うホームページを考えてみませんか。</p>
+   307	        <p class="supplement">現在は開業準備中です。フォームの入力内容は送信されません。</p>
+   308	      </div>
+   309	      <div class="cta-band-action">
+   310	        <a class="btn btn-inverse" href="index.html#contact">相談フォームを見る（デモ）</a>
+   311	      </div>
+   312	    </div>
+   313	  </aside>
+   314	
+   315	  <footer class="site-footer">
+   316	    <div class="container footer-inner">
+   317	      <ul class="footer-links">
+   318	        <li><a href="tokushoho.html">特定商取引法に基づく表記</a></li>
+   319	      </ul>
+   320	      <p class="copyright">© Studio Miraie</p>
+   321	    </div>
+   322	  </footer>
+   323	
+   324	  <script src="js/main.js"></script>
+   325	</body>
+   326	</html>
+
+exec
+/bin/bash -lc 'cat site/works.html site/column.html site/tokushoho.html' in /home/hatch/workspace/projects/portfolio-site
+ succeeded in 0ms:
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>制作例・デモ｜Studio Miraie</title>
+  <meta name="description" content="現在掲載しているのは自主制作デモです。実在するお店の受注実績や、お客様の声ではありません。">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">本文へ</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="site-logo" href="index.html">Studio Miraie</a>
+      <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="site-nav">メニュー</button>
+      <nav class="site-nav" id="site-nav" aria-label="主要ナビゲーション">
+        <ul class="nav-list">
+          <li><a href="index.html#service">サービス</a></li>
+          <li><a href="index.html#pricing">料金</a></li>
+          <li><a href="works.html" aria-current="page">制作例</a></li>
+          <li><a href="column.html">コラム</a></li>
+          <li><a class="nav-cta" href="index.html#contact">相談フォーム（デモ）</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <div class="container">
+      <ol class="breadcrumb-list">
+        <li><a href="index.html">ホーム</a></li>
+        <li aria-current="page">制作例・デモ</li>
+      </ol>
+    </div>
+  </nav>
+
+  <main id="main">
+    <header class="page-header">
+      <div class="container">
+        <span class="en-display">WORKS</span>
+        <h1>制作例と、デザインの考え方。</h1>
+        <p>現在掲載しているのは自主制作デモです。実在するお店の受注実績や、お客様の声ではありません。</p>
+      </div>
+    </header>
+
+    <section class="section" id="hiyori">
+      <div class="container">
+        <p><span class="tag">DEMO / 自主制作</span></p>
+        <h2>ひより珈琲</h2>
+        <p>架空のカフェを題材に、落ち着いた雰囲気と情報の探しやすさを両立させるためのデモを制作しました。</p>
+
+        <figure style="margin-block: 32px;">
+          <div class="media-contain">
+            <img src="images/demo-desktop.png" width="1280" height="900" loading="lazy" decoding="async" alt="自主制作デモ『ひより珈琲』のパソコン画面">
+          </div>
+          <figcaption>パソコン画面の画像プレビュー</figcaption>
+        </figure>
+
+        <div class="btn-group">
+          <a class="btn btn-secondary" href="images/demo-desktop.png">デモ画面を大きく見る</a>
+        </div>
+        <p class="note">画像プレビューです。操作できるサイトではありません。</p>
+
+        <div class="service-list" style="margin-top: 48px;">
+          <div class="service-item">
+            <h3>設計の狙い</h3>
+            <p>はじめて訪れる方が、お店の雰囲気・メニュー・行き方を順番に確認できること。写真だけでなく、来店前の判断に必要な情報を読みやすく配置することを目指しました。</p>
+          </div>
+          <div class="service-item">
+            <h3>構成の考え方</h3>
+            <p>トップで雰囲気を伝え、お店の紹介、メニュー、アクセス・営業案内へつなぐ設計です。このページでは画面画像と設計意図を紹介しています。</p>
+          </div>
+          <div class="service-item">
+            <h3>デザインの到達点</h3>
+            <p>ひより珈琲run5は、アイボリー、エスプレッソ黒、ゴールドを使った落ち着いた方向性です。明朝の見出し、細い罫線、広めの余白で、お店の世界観を整えています。</p>
+          </div>
+          <div class="service-item">
+            <h3>デザインの変遷について</h3>
+            <p>ここでは現行のrun5の画面を掲載しています。以前の版との比較画像や変更履歴は掲載していません。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="monitor">
+      <div class="container">
+        <span class="en-display">MONITOR</span>
+        <h2>最初の制作例づくりに、ご協力いただけるお店へ。</h2>
+        <p>モニター価格は98,000円（税込・買い切り）、先着3店を予定しています。店舗名・サイト画面・サイトURL・ご感想の掲載への同意が条件です。現在は開業準備中で、受付開始前です。</p>
+        <div class="btn-group">
+          <a class="btn btn-primary" href="index.html#pricing">モニターの条件を見る</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <aside class="cta-band" aria-label="ご相談案内">
+    <div class="container cta-band-inner">
+      <div class="cta-band-content">
+        <span class="en-display">LET'S TALK</span>
+        <h2>お店のこれからを、形に。</h2>
+        <p>制作内容や料金を見ながら、お店に合うホームページを考えてみませんか。</p>
+        <p class="supplement">現在は開業準備中です。フォームの入力内容は送信されません。</p>
+      </div>
+      <div class="cta-band-action">
+        <a class="btn btn-inverse" href="index.html#contact">相談フォームを見る（デモ）</a>
+      </div>
+    </div>
+  </aside>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <ul class="footer-links">
+        <li><a href="tokushoho.html">特定商取引法に基づく表記</a></li>
+      </ul>
+      <p class="copyright">© Studio Miraie</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>コラム｜Studio Miraie</title>
+  <meta name="description" content="ホームページとお店の情報を整えるための、短い読みものです。現在は準備中の記事の要約を掲載しています。記事全文の公開は今後の予定です。">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">本文へ</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="site-logo" href="index.html">Studio Miraie</a>
+      <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="site-nav">メニュー</button>
+      <nav class="site-nav" id="site-nav" aria-label="主要ナビゲーション">
+        <ul class="nav-list">
+          <li><a href="index.html#service">サービス</a></li>
+          <li><a href="index.html#pricing">料金</a></li>
+          <li><a href="works.html">制作例</a></li>
+          <li><a href="column.html" aria-current="page">コラム</a></li>
+          <li><a class="nav-cta" href="index.html#contact">相談フォーム（デモ）</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <div class="container">
+      <ol class="breadcrumb-list">
+        <li><a href="index.html">ホーム</a></li>
+        <li aria-current="page">コラム</li>
+      </ol>
+    </div>
+  </nav>
+
+  <main id="main">
+    <header class="page-header">
+      <div class="container">
+        <span class="en-display">JOURNAL</span>
+        <h1>お店のウェブを、少しずつ。</h1>
+        <p>ホームページとお店の情報を整えるための、短い読みものです。現在は準備中の記事の要約を掲載しています。記事全文の公開は今後の予定です。</p>
+      </div>
+    </header>
+
+    <section class="section" id="grid" aria-label="記事一覧">
+      <div class="container">
+        <div class="grid-cards" style="margin-top: 0;">
+          <article class="journal-article" id="column-basics">
+            <div class="journal-meta">
+              <span class="tag">WEBSITE</span>
+              <div class="journal-date">
+                <span class="sr-only">公開準備中。公開日未定。</span>
+                <div aria-hidden="true">
+                  <span class="date-year">----</span>
+                  <span class="date-md">--.--</span>
+                </div>
+                <span class="date-note" aria-hidden="true">公開日未定</span>
+              </div>
+            </div>
+            <h2>カフェのホームページ、最初に載せるべき5つのこと</h2>
+            <p>営業時間、場所、メニュー、店内の雰囲気、連絡方法。はじめてのお客様が来店を考えるときに知りたい情報を、見つけやすくまとめるための基本を紹介する予定です。</p>
+          </article>
+
+          <article class="journal-article" id="column-instagram">
+            <div class="journal-meta">
+              <span class="tag">COMMUNICATION</span>
+              <div class="journal-date">
+                <span class="sr-only">公開準備中。公開日未定。</span>
+                <div aria-hidden="true">
+                  <span class="date-year">----</span>
+                  <span class="date-md">--.--</span>
+                </div>
+                <span class="date-note" aria-hidden="true">公開日未定</span>
+              </div>
+            </div>
+            <h2>Instagramだけでは届かない情報</h2>
+            <p>日々の投稿はお店の空気を伝える場所。ホームページは、営業時間やアクセスなど、いつでも確認したい情報をまとめる場所。それぞれの役割と、無理なくつなぐ方法を紹介する予定です。</p>
+          </article>
+
+          <article class="journal-article" id="column-map">
+            <div class="journal-meta">
+              <span class="tag">SHOP INFO</span>
+              <div class="journal-date">
+                <span class="sr-only">公開準備中。公開日未定。</span>
+                <div aria-hidden="true">
+                  <span class="date-year">----</span>
+                  <span class="date-md">--.--</span>
+                </div>
+                <span class="date-note" aria-hidden="true">公開日未定</span>
+              </div>
+            </div>
+            <h2>Googleマップの営業時間、合っていますか？</h2>
+            <p>通常の営業時間と、祝日や臨時休業の情報が一致しているか。来店前の行き違いを減らすために、お店で見直したい情報と確認の進め方を紹介する予定です。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2>情報を整えるところから、相談したい方へ。</h2>
+        <p>Studio Miraieの制作内容と料金をまとめています。</p>
+        <div class="btn-group">
+          <a class="btn btn-primary" href="index.html#service">サービスと料金を見る</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <aside class="cta-band" aria-label="ご相談案内">
+    <div class="container cta-band-inner">
+      <div class="cta-band-content">
+        <span class="en-display">LET'S TALK</span>
+        <h2>お店のこれからを、形に。</h2>
+        <p>制作内容や料金を見ながら、お店に合うホームページを考えてみませんか。</p>
+        <p class="supplement">現在は開業準備中です。フォームの入力内容は送信されません。</p>
+      </div>
+      <div class="cta-band-action">
+        <a class="btn btn-inverse" href="index.html#contact">相談フォームを見る（デモ）</a>
+      </div>
+    </div>
+  </aside>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <ul class="footer-links">
+        <li><a href="tokushoho.html">特定商取引法に基づく表記</a></li>
+      </ul>
+      <p class="copyright">© Studio Miraie</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>特定商取引法に基づく表記｜Studio Miraie</title>
+  <meta name="description" content="現在は開業準備中です。販売・契約・決済の受付は行っていません。下記の事業者情報と取引条件は、販売開始前に確定・更新します。">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">本文へ</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="site-logo" href="index.html">Studio Miraie</a>
+      <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="site-nav">メニュー</button>
+      <nav class="site-nav" id="site-nav" aria-label="主要ナビゲーション">
+        <ul class="nav-list">
+          <li><a href="index.html#service">サービス</a></li>
+          <li><a href="index.html#pricing">料金</a></li>
+          <li><a href="works.html">制作例</a></li>
+          <li><a href="column.html">コラム</a></li>
+          <li><a class="nav-cta" href="index.html#contact">相談フォーム（デモ）</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <div class="container">
+      <ol class="breadcrumb-list">
+        <li><a href="index.html">ホーム</a></li>
+        <li aria-current="page">特定商取引法に基づく表記</li>
+      </ol>
+    </div>
+  </nav>
+
+  <main id="main">
+    <header class="page-header">
+      <div class="container">
+        <span class="en-display">LEGAL</span>
+        <h1>特定商取引法に基づく表記</h1>
+        <p>現在は開業準備中です。販売・契約・決済の受付は行っていません。下記の事業者情報と取引条件は、販売開始前に確定・更新します。</p>
+      </div>
+    </header>
+
+    <section class="section" aria-label="事業者情報と取引条件">
+      <div class="container">
+        <dl class="legal-dl">
+          <div class="legal-row">
+            <dt>屋号</dt>
+            <dd>Studio Miraie</dd>
+          </div>
+          <div class="legal-row">
+            <dt>販売事業者・運営責任者</dt>
+            <dd>【公開前に本人の実氏名を記載】</dd>
+          </div>
+          <div class="legal-row">
+            <dt>所在地</dt>
+            <dd>【公開前に本人の実住所を記載】</dd>
+          </div>
+          <div class="legal-row">
+            <dt>電話番号</dt>
+            <dd>【公開前に本人の実電話番号を記載】</dd>
+          </div>
+          <div class="legal-row">
+            <dt>連絡先メールアドレス</dt>
+            <dd>【公開前に実際に受信できるメールアドレスを記載】</dd>
+          </div>
+          <div class="legal-row">
+            <dt>受付状況</dt>
+            <dd>現在は開業準備中です。フォームはモックのため送信されず、お問い合わせ・お申し込みは受け付けていません。</dd>
+          </div>
+          <div class="legal-row">
+            <dt>販売価格</dt>
+            <dd>通常148,000円（税込）、モニター98,000円（税込）。任意保守はライト月額5,000円（税込）、スタンダード月額10,000円（税込）。追加制作は事前にお見積もりします。</dd>
+          </div>
+          <div class="legal-row">
+            <dt>商品代金以外の料金</dt>
+            <dd>ドメイン・サーバー等の外部契約料金、銀行振込手数料、別途ご依頼いただく印刷・追加制作等の費用。契約先と実費は契約前にご案内します。</dd>
+          </div>
+          <div class="legal-row">
+            <dt>支払方法・時期</dt>
+            <dd>銀行振込。制作費は契約後50%、公開前の最終確認後50%。具体的な期限は契約時に提示します。保守は当月分を前月末までにお支払いください。振込手数料はお客様負担です。</dd>
+          </div>
+          <div class="legal-row">
+            <dt>提供時期</dt>
+            <dd>制作内容と素材の受領状況を確認し、契約時に公開予定日を定めます。最終確認と残金のお支払い後に公開・データ納品を行います。</dd>
+          </div>
+          <div class="legal-row">
+            <dt>制作範囲・修正</dt>
+            <dd>5ページの静的サイト、Instagramリンク、Googleビジネスプロフィールの情報整理支援、QRカードPDF、基本SEO。制作中の修正は当初範囲内で2回まで。追加機能や構成変更は別途お見積もりです。</dd>
+          </div>
+          <div class="legal-row">
+            <dt>キャンセル・返金</dt>
+            <dd>契約前のキャンセルに制作費はかかりません。契約後は進行済みの作業と発生済み実費を、契約で合意した算定方法に基づき精算します。受領済み金額に精算額を超える分がある場合は返金します。算定方法と返金時期は契約前にご案内します。</dd>
+          </div>
+          <div class="legal-row">
+            <dt>契約内容との不一致</dt>
+            <dd>納品物に合意した仕様との不一致がある場合はご連絡ください。内容を確認し、修正等の対応をご案内します。お客様の法令上の権利を制限するものではありません。</dd>
+          </div>
+          <div class="legal-row">
+            <dt>保守範囲・解約</dt>
+            <dd>任意・月単位。ライトは月1回の表示確認と月1回30分以内の差し替え。スタンダードは月1回の表示確認と月2回合計60分以内の差し替え。構成変更・新規ページは別料金です。終了希望月の前月末までにご連絡ください。最低契約期間・解約金はありません。</dd>
+          </div>
+          <div class="legal-row">
+            <dt>モニター条件</dt>
+            <dd>先着3店を予定。店舗名・サイト画面・サイトURL・ご感想の掲載への同意が条件です。高評価は条件にしません。掲載前に内容をご確認いただきます。受付開始後、条件への同意と契約が成立した順に決定します。現在は受付開始前です。</dd>
+          </div>
+          <div class="legal-row">
+            <dt>権利・契約名義</dt>
+            <dd>ドメイン・サーバーはお店の名義で契約し、制作データを引き渡します。第三者素材には各素材の利用条件が適用されます。詳細は契約前に提示します。</dd>
+          </div>
+        </dl>
+
+        <div class="btn-group">
+          <a class="btn btn-secondary" href="index.html#pricing">制作内容・料金を見る</a>
+          <a class="btn btn-secondary" href="index.html#contact">フォームのデモを見る</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <aside class="cta-band" aria-label="ご相談案内">
+    <div class="container cta-band-inner">
+      <div class="cta-band-content">
+        <span class="en-display">LET'S TALK</span>
+        <h2>お店のこれからを、形に。</h2>
+        <p>制作内容や料金を見ながら、お店に合うホームページを考えてみませんか。</p>
+        <p class="supplement">現在は開業準備中です。フォームの入力内容は送信されません。</p>
+      </div>
+      <div class="cta-band-action">
+        <a class="btn btn-inverse" href="index.html#contact">相談フォームを見る（デモ）</a>
+      </div>
+    </div>
+  </aside>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <ul class="footer-links">
+        <li><a href="tokushoho.html" aria-current="page">特定商取引法に基づく表記</a></li>
+      </ul>
+      <p class="copyright">© Studio Miraie</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
+
+exec
+/bin/bash -lc "sed -n '1,300p' site/css/style.css; cat .agents/runs/1/build-log.md; sed -n '230,400p' .agents/runs/1/design.md; node -e \"for (const p of ['playwright','puppeteer','@playwright/test']) {try {console.log(p,require.resolve(p))}catch{}}\"; which chromium chromium-browser google-chrome firefox" in /home/hatch/workspace/projects/portfolio-site
+ exited 1 in 7ms:
+:root {
+  --bg: #FAF7F2;
+  --text: #1C1917;
+  --accent: #A16207;
+  --surface: #FDFCFA;
+  --muted: #5C554E;
+  --border: #D8D2C8;
+
+  --font-serif: 'Yu Mincho', 'Hiragino Mincho ProN', 'Noto Serif CJK JP', serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Yu Gothic', Meiryo, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  line-height: 1.9;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.9;
+  overflow-x: hidden;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Focus styles */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.cta-band :focus-visible {
+  outline: 2px solid var(--bg);
+  outline-offset: 3px;
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 16px;
+  z-index: 1000;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 16px;
+  background-color: var(--text);
+  color: var(--bg);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.5;
+  text-decoration: underline;
+  border: 2px solid var(--bg);
+}
+
+.skip-link:focus {
+  top: 12px;
+}
+
+/* Links */
+a {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+a:hover {
+  color: var(--accent);
+}
+
+/* Container & Layout */
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 16px;
+}
+
+@media (min-width: 375px) {
+  .container {
+    padding-inline: 20px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding-inline: 32px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    padding-inline: 80px;
+  }
+}
+
+/* Section spacing */
+.section {
+  padding-block: 64px;
+  border-bottom: 1px solid var(--border);
+}
+
+.page-header {
+  padding-block: 48px 64px;
+  border-bottom: 1px solid var(--border);
+}
+
+@media (min-width: 768px) {
+  .section {
+    padding-block: 80px;
+  }
+  .page-header {
+    padding-block: 64px 80px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .section {
+    padding-block: 112px;
+  }
+  .page-header {
+    padding-block: 80px 112px;
+  }
+}
+
+/* Typography */
+h1,
+h2,
+h3 {
+  font-family: var(--font-serif);
+  color: var(--text);
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 16px;
+  overflow-wrap: anywhere;
+}
+
+h1 {
+  font-size: 2rem; /* 32px */
+  line-height: 1.35;
+}
+
+h2 {
+  font-size: 1.625rem; /* 26px */
+  line-height: 1.4;
+}
+
+h3 {
+  font-size: 1.25rem; /* 20px */
+  line-height: 1.45;
+}
+
+@media (min-width: 768px) {
+  h1 {
+    font-size: 2.5rem; /* 40px */
+  }
+  h2 {
+    font-size: 2rem; /* 32px */
+  }
+  h3 {
+    font-size: 1.5rem; /* 24px */
+  }
+}
+
+@media (min-width: 1280px) {
+  h1 {
+    font-size: 3.5rem; /* 56px */
+  }
+  h2 {
+    font-size: 2.5rem; /* 40px */
+  }
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: 16px;
+  max-width: 38em;
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+.en-display {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 2rem; /* 32px */
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  margin-bottom: 12px;
+  overflow-wrap: break-word;
+}
+
+@media (min-width: 768px) {
+  .en-display {
+    font-size: 3.25rem; /* 52px */
+    margin-bottom: 16px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .en-display {
+    font-size: 5rem; /* 80px */
+    margin-bottom: 24px;
+  }
+}
+
+.label-sm {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 0.75rem; /* 12px */
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.tag {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 0.75rem; /* 12px */
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  background-color: var(--surface);
+  border: 1px solid var(--accent);
+  padding: 4px 8px;
+  border-radius: 2px;
+}
+
+.tag-status {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 0.75rem; /* 12px */
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text);
+  background-color: var(--bg);
+  border: 1px solid var(--muted);
+  padding: 4px 8px;
+  border-radius: 2px;
+}
+
+.supplement,
+.note,
+figcaption {
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.75;
+  color: var(--muted);
+  max-width: 38em;
+}
+
+figcaption {
+  margin-top: 8px;
+}
+
+/* Header & Navigation */
+.site-header {
+  background-color: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.header-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 12px;
+  gap: 12px;
+}
+
+.site-logo {
+  display: inline-flex;
+  align-items: center;
+# Studio Miraie 販売用HP 実装ログ（build-log）
+
+## 1. やったこと
+
+- **全4ページの静的HTML実装**
+  - `site/index.html`：ヒーロー（`#hero`）、お悩み（`#needs`）、制作内容（`#service`）、料金（`#pricing`）、安心材料（`#promise`）、流れ（`#flow`）、デモ（`#demo`）、プロフィール（`#about`）、相談フォームモック（`#contact`）、末尾共通CTA帯、フッターを実装。
+  - `site/works.html`：パンくず、ページヘッダー、ひより珈琲デモ詳細（`#hiyori`：画像全体表示、同タブ画像プレビューリンク、非操作サイト注記、4つの設計解説見出し）、モニター案内（`#monitor`）、末尾共通CTA帯、フッターを実装。
+  - `site/column.html`：パンくず、ページヘッダー、3記事の編集グリッド（`#grid`：罫線・カテゴリタグ・装飾日付 `----` / `--.--` / `公開日未定` とスクリーンリーダー用テキスト「公開準備中。公開日未定。」・非リンク見出し・要約）、サービス案内、末尾共通CTA帯、フッターを実装。
+  - `site/tokushoho.html`：パンくず、ページヘッダー、`<dl>`による全16項目の特定商取引法表記（氏名・住所・電話・メールは指定プレースホルダのまま、`tel:`/`mailto:`リンクなし）、関連リンク、末尾共通CTA帯、フッターを実装。
+- **共通CSSの実装（`site/css/style.css`）**
+  - 6つのデザイントークン（`--bg`, `--text`, `--accent`, `--surface`, `--muted`, `--border`）とOS標準フォントスタック（`--font-serif`, `--font-sans`）を定義。
+  - コントラスト比4.5:1以上（検証済み配色のみ使用、黒背景にゴールド不使用、文字opacity低下なし）、下限フォントサイズ（本文16px、補足14px、ラベル・タグ12px）、リンク下線・タッチ領域44px以上・`:focus-visible`枠を適用。
+  - Mobile-firstのレスポンシブ設計（320px / 375px / 768px / 1024px / 1280px）および`prefers-reduced-motion`対応を実装。
+- **共通JavaScriptの実装（`site/js/main.js`）**
+  - 1024px未満のナビ開閉ボタン（「メニュー／閉じる」切替、`aria-expanded`連動、`Escape`キーで閉じてボタンへフォーカス復帰、リンク選択時クローズ、JS無効時は展開表示）を実装。
+  - 相談フォームモックの初期`disabled`解除、`submit`および`Enter`キー送信の抑止、必須・メール形式検証、`aria-invalid` / `aria-describedby`連動、最初の不正項目へのフォーカス移動、正常確認時の`role="status"`表示を通信ゼロで実装。
+
+## 2. 根拠（設計書の該当箇所）
+
+- **状態表記・架空情報の排除・プレースホルダ維持**：`.agents/runs/1/design.md`「1. 設計方針・状態」「7. tokushoho.html：掲載順と文案」
+- **ファイル構成・共通ナビ・パンくず・デモ画像リンク仕様**：`.agents/runs/1/design.md`「2. ファイル構成・導線」
+- **カラートークン・コントラスト比4.5:1以上・書体・寸法・レスポンシブ・アクセシビリティ**：`.agents/runs/1/design.md`「3. デザインシステム」
+- **各ページのセクション順序・見出し・本文・注記・フォームモック仕様**：`.agents/runs/1/design.md`「4. index.html」「5. works.html」「6. column.html」「7. tokushoho.html」
+- **全ページ末尾の共通CTA帯（画面下固定ではなく`main`直後・`footer`直前に常設）**：`.agents/runs/1/design.md`「8. 全ページ末尾の共通CTA」
+- **既存画像3点の寸法・`object-fit`・`alt`・`loading`属性・外部通信ゼロ**：`.agents/runs/1/design.md`「9. 画像と外部通信」
+- **メタ情報（`lang="ja"`, `noindex,nofollow`, `title`, `description`）および検収基準**：`.agents/runs/1/design.md`「10. メタ情報と検収」
+
+## 3. 未確認のこと
+
+- 実行環境にGUIブラウザ（Chromium等）が含まれないため、実ブラウザ描画での320/375/768/1280pxおよび200%拡大時の視覚的なピクセル崩れ・実機スクリーンリーダー読み上げは未確認（HTML構造・リンク/アンカー整合性・外部URLゼロ・CSSトークンおよびブレークポイント指定はスクリプトおよびコード精査で確認済み）。
+- 販売開始前に事業者本人が確定すべき実氏名・実住所・実電話番号・実メールアドレス、および確定後の契約条件・`robots`メタタグ更新は開業準備段階のため未反映（設計書の指定どおりプレースホルダおよび`noindex,nofollow`を維持）。
+| 商品代金以外の料金 | ドメイン・サーバー等の外部契約料金、銀行振込手数料、別途ご依頼いただく印刷・追加制作等の費用。契約先と実費は契約前にご案内します。 |
+| 支払方法・時期 | 銀行振込。制作費は契約後50%、公開前の最終確認後50%。具体的な期限は契約時に提示します。保守は当月分を前月末までにお支払いください。振込手数料はお客様負担です。 |
+| 提供時期 | 制作内容と素材の受領状況を確認し、契約時に公開予定日を定めます。最終確認と残金のお支払い後に公開・データ納品を行います。 |
+| 制作範囲・修正 | 5ページの静的サイト、Instagramリンク、Googleビジネスプロフィールの情報整理支援、QRカードPDF、基本SEO。制作中の修正は当初範囲内で2回まで。追加機能や構成変更は別途お見積もりです。 |
+| キャンセル・返金 | 契約前のキャンセルに制作費はかかりません。契約後は進行済みの作業と発生済み実費を、契約で合意した算定方法に基づき精算します。受領済み金額に精算額を超える分がある場合は返金します。算定方法と返金時期は契約前にご案内します。 |
+| 契約内容との不一致 | 納品物に合意した仕様との不一致がある場合はご連絡ください。内容を確認し、修正等の対応をご案内します。お客様の法令上の権利を制限するものではありません。 |
+| 保守範囲・解約 | 任意・月単位。ライトは月1回の表示確認と月1回30分以内の差し替え。スタンダードは月1回の表示確認と月2回合計60分以内の差し替え。構成変更・新規ページは別料金です。終了希望月の前月末までにご連絡ください。最低契約期間・解約金はありません。 |
+| モニター条件 | 先着3店を予定。店舗名・サイト画面・サイトURL・ご感想の掲載への同意が条件です。高評価は条件にしません。掲載前に内容をご確認いただきます。受付開始後、条件への同意と契約が成立した順に決定します。現在は受付開始前です。 |
+| 権利・契約名義 | ドメイン・サーバーはお店の名義で契約し、制作データを引き渡します。第三者素材には各素材の利用条件が適用されます。詳細は契約前に提示します。 |
+
+関連リンク「制作内容・料金を見る」→index.html#pricing、「フォームのデモを見る」→index.html#contact。プレースホルダにtel/mailtoリンクを付けない。
+
+## 8. 全ページ末尾の共通CTA
+
+mainの後、footerの前に配置。「常設」は全ページに存在する意味。画面下固定にはしない。
+
+黒背景。英字「LET'S TALK」。H2「お店のこれからを、形に。」本文「制作内容や料金を見ながら、お店に合うホームページを考えてみませんか。」ボタン「相談フォームを見る（デモ）」→index.html#contact。補足「現在は開業準備中です。フォームの入力内容は送信されません。」
+
+スマホは縦、768px以上で本文とボタン横配置。上下48〜64px。LPのフォーム後にも同じ帯を置く。架空のTEL・営業時間は表示しない。
+
+## 9. 画像と外部通信
+
+| 画像 | 寸法・扱い | alt |
+|---|---|---|
+| demo-desktop.png | 1280×900。ヒーロー・デモ・works。全体表示、contain、切り抜き禁止。 | 自主制作デモ『ひより珈琲』のパソコン画面 |
+| cafe-storefront.jpg | 1600×1067。お悩み。4:3枠cover中央。 | カフェの外観イメージ |
+| cafe-interior.jpg | 1600×1067。プロフィール。3:2枠cover中央。 | 落ち着いたカフェ店内のイメージ |
+
+実寸width/heightとaspect-ratioで領域確保。画像はmax-width:100%。ヒーローのみeager、ほかlazy、decoding=async。画像内の文字を料金条件の代用にしない。
+
+すべて相対URL。外部フォント・地図iframe・Instagram埋め込み・CDN・解析・外部API・外部favicon・CSS @import・外部preconnect/prefetch禁止。Googleマップ等は本文中の名称のみ。フォーム操作で通信を一切発生させない。
+
+## 10. メタ情報と検収
+
+lang=ja。viewport=width=device-width, initial-scale=1。準備版は全ページrobots=noindex,nofollow。未検証のcanonical・所在地・評価・公開日を構造化データに入れない。
+
+タイトル：index「カフェ向けホームページ制作｜Studio Miraie」、works「制作例・デモ｜Studio Miraie」、column「コラム｜Studio Miraie」、tokushoho「特定商取引法に基づく表記｜Studio Miraie」。descriptionはそれぞれページ冒頭の紹介文を用い、実受付や実績があると誤認させない。
+
+実装者の検収項目：
+
+- 全4ページを320/375/768/1280pxと200%拡大で確認。横はみ出し・文字切れ・画像変形なし。
+- 本文16px／補足14px／ラベル12px以上。通常・hover・focus・エラーすべて文字4.5:1以上。
+- リンク・アンカーが実在し、デモが画像であると事前にわかる。記事の無効リンクなし。
+- キーボードで全操作可能。メニュー開閉・Escape・フォーカス、ラベル、エラー読み上げを確認。
+- フォームのボタン・Enter・JS無効時のすべてで送信・保存・URLへの入力付与なし。操作後も「返信はありません」と案内。
+- 読込・全操作で同一配信元のHTML/CSS/JS/画像以外のリクエストゼロ。フォーム操作自体は通信ゼロ。
+- 全ページで税込料金・保守・モニター条件が一致。架空の実績・口コミ・残枠・日付なし。個人情報は指定プレースホルダ。
+- 全ページ末尾CTAあり。販売開始前に実情報、契約条件、実問い合わせ先、募集状態、robotsを更新する。
+
+codex
+主要な文案・料金・モニター条件は設計書と一致し、外部通信やフォーム送信の処理も見当たりません。引き続き、リンク先・配色・文字サイズと、指定幅でのレイアウト上のリスクを確認しています。ブラウザ描画環境がないため、実表示の確認とコードからの判定は区別して記録します。
+exec
+/bin/bash -lc "sed -n '295,415p' site/css/style.css; sed -n '1,55p' site/index.html; sed -n '200,235p' .agents/runs/1/design.md; rg -n 'font-size|white-space|min-width|width:|flex-shrink|overflow|color:|opacity|url\\(|@import' site/css/style.css; ls /usr/bin/*chrom* /opt /tmp /home/hatch/.cache 2>/dev/null" in /home/hatch/workspace/projects/portfolio-site
+ exited 2 in 0ms:
+  gap: 12px;
+}
+
+.site-logo {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-block: 4px;
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.site-logo:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px 16px;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text);
+  background-color: var(--surface);
+  border: 1px solid var(--text);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.nav-toggle:hover {
+  background-color: var(--text);
+  color: var(--bg);
+}
+
+.js-enabled .nav-toggle {
+  display: inline-flex;
+}
+
+.site-nav {
+  width: 100%;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+.js-enabled .site-nav[hidden] {
+  display: none;
+}
+
+.nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nav-list a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text);
+  text-decoration: underline;
+  border-radius: 2px;
+}
+
+.nav-list a:hover {
+  background-color: var(--surface);
+  color: var(--accent);
+}
+
+.nav-list a[aria-current="page"] {
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.nav-list .nav-cta {
+  background-color: var(--text);
+  color: var(--bg);
+  border: 1px solid var(--text);
+  font-weight: 600;
+  justify-content: center;
+}
+
+.nav-list .nav-cta:hover {
+  background-color: var(--surface);
+  color: var(--text);
+}
+
+@media (min-width: 1024px) {
+  .js-enabled .nav-toggle,
+  .nav-toggle {
+    display: none;
+  }
+
+  .site-nav,
+  .js-enabled .site-nav[hidden] {
+    display: block;
+    width: auto;
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .nav-list {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>カフェ向けホームページ制作｜Studio Miraie</title>
+  <meta name="description" content="お店の空気も、メニューも、行き方も。来店前に知りたい情報をひとつにまとめて、お店らしさが伝わるホームページをつくります。現在は開業準備中です。">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">本文へ</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="site-logo" href="index.html" aria-current="page">Studio Miraie</a>
+      <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="site-nav">メニュー</button>
+      <nav class="site-nav" id="site-nav" aria-label="主要ナビゲーション">
+        <ul class="nav-list">
+          <li><a href="index.html#service">サービス</a></li>
+          <li><a href="index.html#pricing">料金</a></li>
+          <li><a href="works.html">制作例</a></li>
+          <li><a href="column.html">コラム</a></li>
+          <li><a class="nav-cta" href="index.html#contact">相談フォーム（デモ）</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="section" id="hero">
+      <div class="container grid-hero">
+        <div class="hero-content">
+          <span class="en-display">CAFE WEB DESIGN</span>
+          <span class="label-sm">Studio Miraie / カフェのホームページ制作</span>
+          <h1>カフェのための、ちょうどいいホームページ。</h1>
+          <p>お店の空気も、メニューも、行き方も。来店前に知りたい情報をひとつにまとめて、お店らしさが伝わるホームページをつくります。</p>
+          <p class="price-preview">通常148,000円（税込・買い切り）／モニター98,000円（税込）</p>
+          <div class="btn-group">
+            <a class="btn btn-primary" href="works.html#hiyori">デモの仕上がりを見る</a>
+            <a class="btn btn-secondary" href="#pricing">料金と条件を見る</a>
+          </div>
+          <p class="note">画像プレビューです。操作できるサイトではありません。</p>
+          <p class="note">現在は開業準備中です。モニターは先着3店を予定しています。受付はまだ開始していません。</p>
+        </div>
+        <figure class="hero-visual">
+          <div class="media-contain">
+            <img src="images/demo-desktop.png" width="1280" height="900" loading="eager" decoding="async" alt="自主制作デモ『ひより珈琲』のパソコン画面">
+          </div>
+          <figcaption>自主制作デモ『ひより珈琲』。実在する店舗の制作実績ではありません。</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="needs">
+
+パンくず「ホーム / コラム」。英字「JOURNAL」。H1「お店のウェブを、少しずつ。」本文「ホームページとお店の情報を整えるための、短い読みものです。現在は準備中の記事の要約を掲載しています。記事全文の公開は今後の予定です。」
+
+### 編集グリッド #grid
+
+3記事をarticleとして配置。罫線→カテゴリタグ→日付→タイトル→要約の順。日付は年「----」、月日「--.--」、注記「公開日未定」。年と月日を別ブロックにし、上記の大小タイポを適用。装飾日付はaria-hidden、読み上げは「公開準備中。公開日未定。」を一度だけ置く。実公開時にのみ実日付のtime datetimeへ置換する。タイトルはリンクにせず、「続きを読む」も付けない。
+
+1. id=column-basics、タグ「WEBSITE」。H2「カフェのホームページ、最初に載せるべき5つのこと」。要約「営業時間、場所、メニュー、店内の雰囲気、連絡方法。はじめてのお客様が来店を考えるときに知りたい情報を、見つけやすくまとめるための基本を紹介する予定です。」
+2. id=column-instagram、タグ「COMMUNICATION」。H2「Instagramだけでは届かない情報」。要約「日々の投稿はお店の空気を伝える場所。ホームページは、営業時間やアクセスなど、いつでも確認したい情報をまとめる場所。それぞれの役割と、無理なくつなぐ方法を紹介する予定です。」
+3. id=column-map、タグ「SHOP INFO」。H2「Googleマップの営業時間、合っていますか？」。要約「通常の営業時間と、祝日や臨時休業の情報が一致しているか。来店前の行き違いを減らすために、お店で見直したい情報と確認の進め方を紹介する予定です。」
+
+サムネイル・アーカイブ・ページ送り・フィルター不要。カード全体を操作可能に見せない。
+
+次の案内：H2「情報を整えるところから、相談したい方へ。」本文「Studio Miraieの制作内容と料金をまとめています。」リンク「サービスと料金を見る」→index.html#service。
+
+## 7. tokushoho.html：掲載順と文案
+
+パンくず「ホーム / 特定商取引法に基づく表記」。英字「LEGAL」。H1「特定商取引法に基づく表記」。冒頭「現在は開業準備中です。販売・契約・決済の受付は行っていません。下記の事業者情報と取引条件は、販売開始前に確定・更新します。」
+
+dlで実装。スマホは縦積み、768px以上は項目240px＋内容。
+
+| 項目 | 表示内容 |
+|---|---|
+| 屋号 | Studio Miraie |
+| 販売事業者・運営責任者 | 【公開前に本人の実氏名を記載】 |
+| 所在地 | 【公開前に本人の実住所を記載】 |
+| 電話番号 | 【公開前に本人の実電話番号を記載】 |
+| 連絡先メールアドレス | 【公開前に実際に受信できるメールアドレスを記載】 |
+| 受付状況 | 現在は開業準備中です。フォームはモックのため送信されず、お問い合わせ・お申し込みは受け付けていません。 |
+| 販売価格 | 通常148,000円（税込）、モニター98,000円（税込）。任意保守はライト月額5,000円（税込）、スタンダード月額10,000円（税込）。追加制作は事前にお見積もりします。 |
+| 商品代金以外の料金 | ドメイン・サーバー等の外部契約料金、銀行振込手数料、別途ご依頼いただく印刷・追加制作等の費用。契約先と実費は契約前にご案内します。 |
+| 支払方法・時期 | 銀行振込。制作費は契約後50%、公開前の最終確認後50%。具体的な期限は契約時に提示します。保守は当月分を前月末までにお支払いください。振込手数料はお客様負担です。 |
+| 提供時期 | 制作内容と素材の受領状況を確認し、契約時に公開予定日を定めます。最終確認と残金のお支払い後に公開・データ納品を行います。 |
+| 制作範囲・修正 | 5ページの静的サイト、Instagramリンク、Googleビジネスプロフィールの情報整理支援、QRカードPDF、基本SEO。制作中の修正は当初範囲内で2回まで。追加機能や構成変更は別途お見積もりです。 |
+| キャンセル・返金 | 契約前のキャンセルに制作費はかかりません。契約後は進行済みの作業と発生済み実費を、契約で合意した算定方法に基づき精算します。受領済み金額に精算額を超える分がある場合は返金します。算定方法と返金時期は契約前にご案内します。 |
+| 契約内容との不一致 | 納品物に合意した仕様との不一致がある場合はご連絡ください。内容を確認し、修正等の対応をご案内します。お客様の法令上の権利を制限するものではありません。 |
+20:  font-size: 16px;
+21:  background-color: var(--bg);
+22:  color: var(--text);
+31:  background-color: var(--bg);
+32:  color: var(--text);
+34:  font-size: 1rem;
+36:  overflow-x: hidden;
+37:  overflow-wrap: anywhere;
+43:  max-width: 100%;
+68:  background-color: var(--text);
+69:  color: var(--bg);
+70:  font-size: 0.875rem;
+83:  color: var(--text);
+90:  color: var(--accent);
+95:  width: 100%;
+96:  max-width: 1280px;
+101:@media (min-width: 375px) {
+107:@media (min-width: 768px) {
+113:@media (min-width: 1280px) {
+130:@media (min-width: 768px) {
+139:@media (min-width: 1280px) {
+153:  color: var(--text);
+157:  overflow-wrap: anywhere;
+161:  font-size: 2rem; /* 32px */
+166:  font-size: 1.625rem; /* 26px */
+171:  font-size: 1.25rem; /* 20px */
+175:@media (min-width: 768px) {
+177:    font-size: 2.5rem; /* 40px */
+180:    font-size: 2rem; /* 32px */
+183:    font-size: 1.5rem; /* 24px */
+187:@media (min-width: 1280px) {
+189:    font-size: 3.5rem; /* 56px */
+192:    font-size: 2.5rem; /* 40px */
+199:  max-width: 38em;
+209:  font-size: 2rem; /* 32px */
+213:  color: var(--accent);
+215:  overflow-wrap: break-word;
+218:@media (min-width: 768px) {
+220:    font-size: 3.25rem; /* 52px */
+225:@media (min-width: 1280px) {
+227:    font-size: 5rem; /* 80px */
+235:  font-size: 0.75rem; /* 12px */
+239:  color: var(--muted);
+246:  font-size: 0.75rem; /* 12px */
+250:  color: var(--accent);
+251:  background-color: var(--surface);
+260:  font-size: 0.75rem; /* 12px */
+263:  color: var(--text);
+264:  background-color: var(--bg);
+273:  font-size: 0.875rem; /* 14px */
+275:  color: var(--muted);
+276:  max-width: 38em;
+285:  background-color: var(--bg);
+304:  font-size: 1.25rem;
+306:  color: var(--text);
+311:  color: var(--accent);
+320:  min-width: 44px;
+323:  font-size: 0.875rem;
+326:  color: var(--text);
+327:  background-color: var(--surface);
+335:  background-color: var(--text);
+336:  color: var(--bg);
+344:  width: 100%;
+367:  font-size: 1rem;
+369:  color: var(--text);
+375:  background-color: var(--surface);
+376:  color: var(--accent);
+381:  color: var(--accent);
+385:  background-color: var(--text);
+386:  color: var(--bg);
+393:  background-color: var(--surface);
+394:  color: var(--text);
+397:@media (min-width: 1024px) {
+406:    width: auto;
+426:  font-size: 0.75rem; /* 12px */
+428:  color: var(--muted);
+449:  color: var(--muted);
+456:  color: var(--text);
+461:  color: var(--accent);
+472:@media (min-width: 768px) {
+485:  width: 100%;
+489:  font-size: 1rem; /* 16px */
+499:@media (min-width: 768px) {
+501:    width: auto;
+506:  background-color: var(--text);
+507:  color: var(--bg);
+512:  background-color: var(--surface);
+513:  color: var(--text);
+514:  border-color: var(--text);
+518:  background-color: var(--surface);
+519:  color: var(--text);
+524:  background-color: var(--text);
+525:  color: var(--bg);
+529:  background-color: var(--surface);
+530:  color: var(--muted);
+531:  border-color: var(--muted);
+543:@media (min-width: 768px) {
+550:@media (min-width: 1280px) {
+570:@media (min-width: 768px) {
+577:@media (min-width: 1280px) {
+597:@media (min-width: 768px) {
+604:@media (min-width: 1280px) {
+614:  min-width: 0;
+618:  background-color: var(--surface);
+624:@media (min-width: 375px) {
+636:  background-color: var(--surface);
+648:  background-color: var(--surface);
+654:  width: 100%;
+661:  overflow: hidden;
+665:  width: 100%;
+673:  overflow: hidden;
+677:  width: 100%;
+694:  max-width: 38em;
+710:@media (min-width: 768px) {
+720:  font-size: 1.25rem;
+750:  font-size: 2.5rem; /* 40px */
+753:  color: var(--text);
+756:@media (min-width: 768px) {
+758:    font-size: 2.75rem; /* 44px */
+762:@media (min-width: 1280px) {
+764:    font-size: 3rem; /* 48px */
+771:  font-size: 0.875rem; /* 14px */
+773:  color: var(--muted);
+780:  background-color: var(--surface);
+784:@media (min-width: 375px) {
+797:  max-width: 38em;
+821:@media (min-width: 768px) {
+831:  font-size: 1.25rem;
+833:  color: var(--text);
+839:  font-size: 0.875rem;
+841:  color: var(--accent);
+847:  background-color: var(--surface);
+853:@media (min-width: 375px) {
+861:  max-width: 640px;
+873:  color: var(--text);
+878:  font-size: 0.875rem; /* 14px */
+880:  color: var(--muted);
+886:  width: 100%;
+890:  font-size: 1rem; /* 16px */
+892:  color: var(--text);
+893:  background-color: var(--surface);
+905:  background-color: var(--bg);
+906:  color: var(--muted);
+918:  background-color: var(--surface);
+920:  color: var(--text);
+921:  font-size: 0.875rem; /* 14px */
+933:  background-color: var(--surface);
+935:  color: var(--text);
+961:@media (min-width: 375px) {
+979:  font-size: 0.875rem; /* 14px */
+982:  color: var(--muted);
+988:  font-size: 2.25rem; /* 36px */
+992:  color: var(--text);
+995:@media (min-width: 768px) {
+997:    font-size: 2.75rem; /* 44px */
+1003:  font-size: 0.875rem; /* 14px */
+1005:  color: var(--muted);
+1010:  width: 1px;
+1014:  overflow: hidden;
+1016:  white-space: nowrap;
+1034:@media (min-width: 768px) {
+1044:  color: var(--text);
+1049:  max-width: 38em;
+1054:  background-color: var(--text);
+1055:  color: var(--bg);
+1059:@media (min-width: 768px) {
+1071:@media (min-width: 768px) {
+1081:  color: var(--bg);
+1085:  color: var(--bg);
+1089:  color: var(--bg);
+1093:  color: var(--bg);
+1101:  flex-shrink: 0;
+1105:  background-color: var(--bg);
+1106:  color: var(--text);
+1111:  background-color: var(--text);
+1112:  color: var(--bg);
+1113:  border-color: var(--bg);
+1118:  background-color: var(--bg);
+1129:@media (min-width: 768px) {
+1150:  font-size: 0.875rem; /* 14px */
+1151:  color: var(--text);
+1156:  color: var(--accent);
+1161:  color: var(--accent);
+1165:  font-size: 0.875rem; /* 14px */
+1166:  color: var(--muted);
+/home/hatch/.cache:
+antigravity
+bun
+hatch-thumbnails
+node-gyp
+puppeteer
+
+/opt:
+hatch
+hatch-image
+meta-chromium
+muse
+
+/tmp:
+agy-build.log
+agy-build2.log
+agy-fix.log
+agy-run2.log
+build_artifact.py
+codex-bwrap-synthetic-mount-targets-0
+codex-check.log
+codex-daemon-0
+codex-test
+hero-showa-test.jpg
+linktest.txt
+merge_cafe.py
+new-index.html
+node-compile-cache
+org.chromium.Chromium.XeCYIU
+repro.html
+run1-index.html
+run1-menu.html
+run1-style.css
+run1site
+site-server.log
+
+exec
+/bin/bash -lc "python3 /home/hatch/.codex/skills/ui-ux-pro-max/scripts/search.py 'color contrast text' --domain ux -n 1" in /home/hatch/workspace/projects/portfolio-site
+ succeeded in 40ms:
+## UI Pro Max Search Results
+**Domain:** ux | **Query:** color contrast text
+**Source:** ux-guidelines.csv | **Found:** 1 results
+
+### Result 1
+- **Category:** Accessibility
+- **Issue:** Color Contrast
+- **Platform:** All
+- **Description:** Text must be readable against background
+- **Do:** Minimum 4.5:1 ratio for normal text
+- **Don't:** Low contrast text
+- **Code Example Good:** #333 on white (7:1)
+- **Code Example Bad:** #999 on white (2.8:1)
+- **Severity:** High
+
+
+exec
+/bin/bash -lc "find /opt/meta-chromium /home/hatch/.cache/puppeteer -maxdepth 5 -type f -name '*chrome*'; ls /opt/hatch; npm root -g; python3 -c \"import importlib.util; print([(x, bool(importlib.util.find_spec(x))) for x in ['playwright','selenium','PIL']])\"" in /home/hatch/workspace/projects/portfolio-site
+ succeeded in 141ms:
+/opt/meta-chromium/chrome
+/opt/meta-chromium/chrome_100_percent.pak
+/opt/meta-chromium/chrome_200_percent.pak
+/opt/meta-chromium/chrome_crashpad_handler
+/home/hatch/.cache/puppeteer/chrome-headless-shell/linux-156.0.8078.47/chrome-headless-shell-linux64/chrome-headless-shell
+/home/hatch/.cache/puppeteer/chrome/linux-156.0.8078.47/chrome-linux64/chrome
+/home/hatch/.cache/puppeteer/chrome/linux-156.0.8078.47/chrome-linux64/chrome-wrapper
+/home/hatch/.cache/puppeteer/chrome/linux-156.0.8078.47/chrome-linux64/chrome_100_percent.pak
+/home/hatch/.cache/puppeteer/chrome/linux-156.0.8078.47/chrome-linux64/chrome_200_percent.pak
+/home/hatch/.cache/puppeteer/chrome/linux-156.0.8078.47/chrome-linux64/chrome_crashpad_handler
+/home/hatch/.cache/puppeteer/chrome/linux-156.0.8078.47/chrome-linux64/chrome_sandbox
+assets
+bin
+connectors
+prompts
+runtime-cell
+skills
+workflow-skills
+/usr/lib/node_modules
+[('playwright', False), ('selenium', False), ('PIL', True)]
+
+exec
+/bin/bash -lc '/opt/meta-chromium/chrome --headless --no-sandbox --disable-gpu --dump-dom --no-zygote about:blank' in /home/hatch/workspace/projects/portfolio-site
+ exited 1 in 173ms:
+[1108/164342.247806:ERROR:chrome/app/chrome_main.cc:210] Failed to create headless user data directory container.
+
+exec
+/bin/bash -lc "rg --files /opt /usr/lib/node_modules /tmp/codex-test 2>/dev/null | rg '/(puppeteer|playwright)(-core)?/(package.json|lib/.*\\.js)"'$'"' | head -15" in /home/hatch/workspace/projects/portfolio-site
+ succeeded in 29ms:
+/opt/hatch/skills/spaces/ts-runtime/dist/node_modules/playwright-core/package.json
+/opt/hatch/skills/spaces/ts-runtime/dist/node_modules/playwright-core/lib/zipBundleImpl.js
+/opt/hatch/skills/spaces/ts-runtime/dist/node_modules/playwright-core/lib/zipBundle.js
+/opt/hatch/skills/spaces/ts-runtime/dist/node_modules/playwright-core/lib/vite/traceViewer/uiMode.Dy4dnPNW.js
+/opt/hatch/skills/spaces/ts-runtime/dist/node_modules/playwright-core/lib/vite/traceViewer/sw.bundle.js
+/opt/hatch/skills/spaces/ts-runtime/dist/node_modules/playwright-core/lib/vite/traceViewer/index.CheexZ4_.js
+/opt/hatch/skills/spaces/ts-runtime/dist/node_modules/playwright-core/lib/vite/traceViewer/assets/xtermModule-BoAIEibi.js
+/opt/hatch/skills/spaces/ts-runtime/dist/node_modules/playwright-core/lib/vite/traceViewer/assets/defaultSettingsView-BA25Usqk.js
+/opt/hatch/skills/spaces/ts-runtime/dist/node_modules/playwright-core/lib/vite/traceViewer/assets/codeMirrorModule-CEFqZ5b3.js
+/opt/hatch/skills/spaces/ts-runtime/dist/node_modules/playwright-core/lib/vite/recorder/assets/index-D7C7daHH.js
+/opt/hatch/skills/spaces/ts-runtime/dist/node_modules/playwright-core/lib/vite/recorder/assets/codeMirrorModule-DzQ0k89p.js
+/opt/hatch/skills/spaces/ts-runtime/dist/node_modules/playwright-core/lib/utilsBundleImpl/index.js
+/opt/hatch/skills/spaces/ts-runtime/dist/node_modules/playwright-core/lib/utilsBundle.js
+/opt/hatch/skills/spaces/ts-runtime/dist/node_modules/playwright-core/lib/utils.js
+/opt/hatch/skills/spaces/ts-runtime/dist/node_modules/playwright-core/lib/utils/isomorphic/utilityScriptSerializers.js
+
+exec
+/bin/bash -lc "node - <<'JS'
+const {chromium}=require('/opt/hatch/skills/spaces/ts-runtime/dist/node_modules/playwright-core');
+(async()=>{try{const b=await chromium.launch({executablePath:'/home/hatch/.cache/puppeteer/chrome-headless-shell/linux-156.0.8078.47/chrome-headless-shell-linux64/chrome-headless-shell',headless:true,args:['--no-sandbox']});console.log('LAUNCHED');await b.close()}catch(e){console.log(e.message)}})()
+JS" in /home/hatch/workspace/projects/portfolio-site
+ succeeded in 758ms:
+browserType.launch: Target page, context or browser has been closed
+Browser logs:
+
+<launching> /home/hatch/.cache/puppeteer/chrome-headless-shell/linux-156.0.8078.47/chrome-headless-shell-linux64/chrome-headless-shell --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-010aNP --remote-debugging-pipe --no-startup-window
+<launched> pid=15
+[pid=15][err] [1108/164347.583440:FATAL:content/browser/sandbox_host_linux.cc:41] Check failed: . shutdown: Operation not permitted (1)
+Call log:
+[2m  - <launching> /home/hatch/.cache/puppeteer/chrome-headless-shell/linux-156.0.8078.47/chrome-headless-shell-linux64/chrome-headless-shell --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-010aNP --remote-debugging-pipe --no-startup-window[22m
+[2m  - <launched> pid=15[22m
+[2m  - [pid=15][err] [1108/164347.583440:FATAL:content/browser/sandbox_host_linux.cc:41] Check failed: . shutdown: Operation not permitted (1)[22m
+[2m  - [pid=15] <gracefully close start>[22m
+[2m  - [pid=15] <kill>[22m
+[2m  - [pid=15] <will force kill>[22m
+[2m  - [pid=15] <process did exit: exitCode=null, signal=SIGTRAP>[22m
+[2m  - [pid=15] starting temporary directories cleanup[22m
+[2m  - [pid=15] finished temporary directories cleanup[22m
+[2m  - [pid=15] <gracefully close end>[22m
+
+
+exec
+/bin/bash -lc "python3 - <<'PY'
+from html.parser import HTMLParser
+from pathlib import Path
+from urllib.parse import urlsplit,unquote
+from PIL import Image
+import re
+class P(HTMLParser):
+ def __init__(self): super().__init__(); self.tags=[]; self.text=[]
+ def handle_starttag(self,t,a): self.tags.append((t,dict(a),self.getpos()[0]))
+ def handle_data(self,d): self.text.append(d)
+root=Path('site'); pages={p:P() for p in root.glob('*.html')}
+for p,x in pages.items():x.feed(p.read_text())
+count=0; errors=[]; external=[]
+for p,x in pages.items():
+ ids=[a['id'] for t,a,l in x.tags if 'id'in a]
+ print(p,'h1=',sum(t=='h1' for t,a,l in x.tags),'duplicate_ids=',len(ids)-len(set(ids)))
+ for t,a,l in x.tags:
+  for k in ['href','src','action','srcset']:
+   if k not in a:continue
+   u=urlsplit(a[k]);count+=1
+   if u.scheme or u.netloc:external.append((str(p),l,a[k]));continue
+   target=p.parent/unquote(u.path) if u.path else p
+   if not target.is_file():errors.append((str(p),l,a[k],'missing file'));continue
+   if u.fragment and (target not in pages or u.fragment not in [v.get('id') for _,v,_ in pages[target].tags]):errors.append((str(p),l,a[k],'missing id'))
+print('URL attributes',count,'broken',errors,'external',external)
+for p in (root/'images').iterdir():
+ im=Image.open(p);im.verify();print(p,Image.open(p).size)
+# Every Japanese quoted specification phrase should occur in at least one HTML text.
+design=Path('.agents/runs/1/design.md').read_text(); alltext=''.join(''.join(x.text) for x in pages.values())
+missing=[s for s in re.findall('「(["'^」]+)」'"',design) if s not in alltext]
+print('Quoted strings absent (includes instructions / prohibited examples):',missing)
+colors=['FAF7F2','FDFCFA','1C1917','5C554E','A16207']
+def lum(s):
+ v=[int(s[i:i+2],16)/255 for i in (0,2,4)];v=[c/12.92 if c<=.04045 else ((c+.055)/1.055)**2.4 for c in v];return sum(c*w for c,w in zip(v,[.2126,.7152,.0722]))
+for fg in colors[2:]:
+ for bg in colors[:2]:print(fg,bg,round((max(lum(fg),lum(bg))+.05)/(min(lum(fg),lum(bg))+.05),3))
+PY
+node --check site/js/main.js
+rg -n 'https?:|//|fetch|XMLHttpRequest|sendBeacon|localStorage|sessionStorage|cookie|console\\.|@import|url\\(' site --glob '*.html' --glob '*.css' --glob '*.js'" in /home/hatch/workspace/projects/portfolio-site
+ succeeded in 234ms:
+site/index.html h1= 1 duplicate_ids= 0
+site/works.html h1= 1 duplicate_ids= 0
+site/column.html h1= 1 duplicate_ids= 0
+site/tokushoho.html h1= 1 duplicate_ids= 0
+URL attributes 61 broken [] external []
+site/images/demo-desktop.png (1280, 900)
+site/images/cafe-storefront.jpg (1600, 1067)
+site/images/cafe-interior.jpg (1600, 1067)
+Quoted strings absent (includes instructions / prohibited examples): ['残り3枠', '募集中', '架空のカフェを題材にした自主制作デモ', 'ホーム / 現在ページ', 'メニュー／閉じる', '入力内容を確認しました。これはデモのため、送信・保存は行っていません。返信はありません。', 'お名前を入力してください。', 'メールアドレスの形式を確認してください。', 'ご相談内容を入力してください。', 'ホーム / 制作例・デモ', 'ホーム / コラム', '続きを読む', 'ホーム / 特定商取引法に基づく表記', '常設', '返信はありません']
+1C1917 FAF7F2 16.365
+1C1917 FDFCFA 17.056
+5C554E FAF7F2 6.86
+5C554E FDFCFA 7.15
+A16207 FAF7F2 4.607
+A16207 FDFCFA 4.802
+site/js/main.js:6:  // Navigation menu toggle
+site/js/main.js:33:    // Initialize collapsed on mobile
+site/js/main.js:83:  // Mock contact form handling
+site/js/main.js:97:    // Prevent any form submission
+
+codex
+61件のURL属性にリンク切れはなく、文字色のコントラスト比も最低4.61:1を確認しました。一方、フォームの必須項目には `required`／`aria-required` がなく、支援技術に必須状態が伝わりません。また、横方向のはみ出しを隠すCSS指定を確認しました。ブラウザは起動時に環境制限で停止したため、指定4幅での実表示は未検証として記録します。
+exec
+/bin/bash -lc "nl -ba site/js/main.js | tail -55; nl -ba site/css/style.css | sed -n '1060,1110p'" in /home/hatch/workspace/projects/portfolio-site
+ succeeded in 0ms:
+   134	      if (!isValidEmail(emailVal)) {
+   135	        setFieldState(emailInput, emailError, 'contact-email-hint', 'メールアドレスの形式を確認してください。');
+   136	        if (!firstInvalid) firstInvalid = emailInput;
+   137	      } else {
+   138	        setFieldState(emailInput, emailError, 'contact-email-hint', '');
+   139	      }
+   140	
+   141	      var messageVal = messageInput ? messageInput.value.trim() : '';
+   142	      if (!messageVal) {
+   143	        setFieldState(messageInput, messageError, 'contact-message-hint', 'ご相談内容を入力してください。');
+   144	        if (!firstInvalid) firstInvalid = messageInput;
+   145	      } else {
+   146	        setFieldState(messageInput, messageError, 'contact-message-hint', '');
+   147	      }
+   148	
+   149	      if (firstInvalid) {
+   150	        if (statusBox) {
+   151	          statusBox.textContent = '';
+   152	          statusBox.hidden = true;
+   153	        }
+   154	        firstInvalid.focus();
+   155	        return false;
+   156	      }
+   157	
+   158	      if (statusBox) {
+   159	        statusBox.textContent = '入力内容を確認しました。これはデモのため、送信・保存は行っていません。返信はありません。';
+   160	        statusBox.hidden = false;
+   161	      }
+   162	      return true;
+   163	    }
+   164	
+   165	    var inputs = [nameInput, emailInput, shopInput, messageInput];
+   166	    for (var j = 0; j < inputs.length; j++) {
+   167	      if (inputs[j]) {
+   168	        inputs[j].disabled = false;
+   169	        if (inputs[j].tagName === 'INPUT') {
+   170	          inputs[j].addEventListener('keydown', function (e) {
+   171	            if (e.key === 'Enter') {
+   172	              e.preventDefault();
+   173	              validateForm();
+   174	            }
+   175	          });
+   176	        }
+   177	      }
+   178	    }
+   179	
+   180	    if (submitBtn) {
+   181	      submitBtn.disabled = false;
+   182	      submitBtn.addEventListener('click', function (e) {
+   183	        e.preventDefault();
+   184	        validateForm();
+   185	      });
+   186	    }
+   187	  }
+   188	})();
+  1060	  .cta-band {
+  1061	    padding-block: 64px;
+  1062	  }
+  1063	}
+  1064	
+  1065	.cta-band-inner {
+  1066	  display: flex;
+  1067	  flex-direction: column;
+  1068	  gap: 24px;
+  1069	}
+  1070	
+  1071	@media (min-width: 768px) {
+  1072	  .cta-band-inner {
+  1073	    flex-direction: row;
+  1074	    align-items: center;
+  1075	    justify-content: space-between;
+  1076	    gap: 32px;
+  1077	  }
+  1078	}
+  1079	
+  1080	.cta-band .en-display {
+  1081	  color: var(--bg);
+  1082	}
+  1083	
+  1084	.cta-band h2 {
+  1085	  color: var(--bg);
+  1086	}
+  1087	
+  1088	.cta-band p {
+  1089	  color: var(--bg);
+  1090	}
+  1091	
+  1092	.cta-band .supplement {
+  1093	  color: var(--bg);
+  1094	  margin-top: 12px;
+  1095	}
+  1096	
+  1097	.cta-band-action {
+  1098	  display: flex;
+  1099	  flex-direction: column;
+  1100	  align-items: flex-start;
+  1101	  flex-shrink: 0;
+  1102	}
+  1103	
+  1104	.btn-inverse {
+  1105	  background-color: var(--bg);
+  1106	  color: var(--text);
+  1107	  border: 1px solid var(--bg);
+  1108	}
+  1109	
+  1110	.btn-inverse:hover {
+
+exec
+/bin/bash -lc 'git status --short' in /home/hatch/workspace/projects/portfolio-site
+ succeeded in 0ms:
+?? .agents/runs/1/agy-build-prompt.txt
+?? .agents/runs/1/agy-build.out
+?? .agents/runs/1/build-log.md
+?? .agents/runs/1/codex-check-prompt.txt
+?? .agents/runs/1/codex-check.out
+?? .agents/runs/1/design.md
+?? site/column.html
+?? site/css/
+?? site/index.html
+?? site/js/
+?? site/tokushoho.html
+?? site/works.html
+
+apply patch
+patch: completed
+/home/hatch/workspace/projects/portfolio-site/check-log.md
+diff --git a/check-log.md b/check-log.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..63092ced06540974aeb3826c16073e42f644e83b
+--- /dev/null
++++ b/check-log.md
+@@ -0,0 +1,95 @@
++# Studio Miraie 販売用HP 検品ログ
++
++検品日：2026-11-08。対象：`.agents/runs/1/design.md`、同 `build-log.md`、`site/` の全4 HTML・CSS・JavaScript・画像3点。実装の修正は行っていない。
++
++判定方法：全ソースの照合、HTML解析によるURL・ID検査、画像の実寸・破損検査、配色の相対輝度計算、JavaScript構文検査。合格は、特記がなければ静的検査の範囲での判定。重大度は要修正項目に付す。
++
++## 1. セクション構成・文案：合格
++
++- indexは設計4章の `hero → needs → service → pricing → promise → flow → demo → about → contact` の順で一致。主要見出し・本文・注記を確認した。
++- worksは `hiyori` の画像と4つの設計解説、続いて `monitor`。columnは指定の3記事・要約・サービス案内。tokushohoは指定16項目のdlで一致。
++- 全ページでmain直後・footer直前に共通CTAがあり、画面固定ではない。ヘッダー・フッターはHTMLに直接記述されている。
++- メタ情報は日本語、viewport、指定title、準備版の `noindex,nofollow` を維持。indexのdescriptionには準備中の補足が追加されているが、設計と矛盾しない。
++
++## 2. 料金・契約条件：合格
++
++- `site/index.html:107–165`：通常148,000円、モニター98,000円、任意保守月額5,000〜10,000円。税込・買い切り・任意の注記と価格を別ブロックで表示。
++- モニターは先着3店「予定」、受付開始前。掲載対象・事前確認・高評価を条件にしないこと・契約成立順・不同意時の通常プラン案内が価格直下にある。
++- 5ページの制作範囲、対象外機能、修正2回、追加費用の事前合意、ドメイン／サーバー別料金、制作費50%ずつ、保守範囲・支払期限・解約条件が設計と一致。共通条件は折り畳まれていない。
++- worksのモニター案内、tokushohoの価格・支払・保守・権利等も整合する。販売HPが4ページであることは、販売する5ページ商品との不一致ではない。
++
++## 3. 誠実性・プレースホルダ：合格
++
++- 自主制作・架空店舗・受注実績ではない旨をindexとworksに明記。外観・店内写真にもイメージ写真の注記がある。架空の口コミ、実績数、売上効果、経歴、残枠の表示は見つからない。
++- columnの3記事は要約のみで、日付は `----`／`--.--`／公開日未定。記事タイトルにリンクや「続きを読む」はない。装飾日付をaria-hiddenにし、記事ごとに読み上げ用案内を1つ置いている。
++- `site/tokushoho.html` の氏名・住所・電話・メールは指定プレースホルダのまま。架空の連絡先やtel／mailtoリンクはない。販売・契約・決済の受付をしていないことも明記。
++- この合格は準備版としての設計適合を意味する。実受付開始時には設計書が定める本人情報・条件等の確定が必要であり、今回の検品で架空情報に置き換える必要はない。
++
++## 4. フォームのモック明示・送信防止：合格
++
++- `site/index.html:253–296`：入力前にモック・送信保存なし・受付不可・実個人情報の入力禁止を明記。4項目に可視ラベル、指定maxlength、autocomplete=offがある。
++- 入力と確認ボタンは初期disabled。formにactionや入力nameはなく、確認ボタンはtype=button。JSのsubmitハンドラーがpreventDefaultし、inputのEnterも抑止する。textareaの改行は送信処理につながらない。
++- `site/js/main.js:83–186`：検証、各項目のエラー、aria-invalid／aria-describedby、最初の不正項目へのフォーカス、正常時の「返信はありません」付きstatusを実装。送信・永続保存・入力ログのコードはない。noscript時の説明も一致。
++- 実ブラウザでのボタン・Enter・JS無効時の操作確認は未実施（後述）。
++
++## 5. 外部リクエストゼロ：合格（ソース検査）
++
++- 4 HTMLのhref／src等61件を検査し、外部URLは0件。CSSのurl()・@import、外部フォント、iframe、CDN、解析、preconnect等もない。画像・CSS・JSは相対URLのみ。
++- JSにfetch／XHR／sendBeacon／WebSocket等の通信処理、Cookie／storageへの保存、動的な外部リソース生成はない。フォームのメール例 `sample@example.com` は説明テキストで、接続先ではない。
++- OS搭載フォントのみを指定。画像3点は実ファイルで破損なく、実寸も指定どおり1280×900／1600×1067／1600×1067。
++- Networkログによる実通信の計測は未実施。静的ファイル外の配信サーバー設定や拡張機能による通信は検品対象外。
++
++## 6. アクセシビリティ：色・フォント下限は合格／必須状態は要修正（重大度：低）
++
++### コントラスト：合格
++
++CSSの文字色・背景色を再計算した結果：
++
++| 文字色 | 全体背景 #FAF7F2 | カード背景 #FDFCFA |
++|---|---:|---:|
++| #1C1917 | 16.365:1 | 17.056:1 |
++| #5C554E | 6.860:1 | 7.150:1 |
++| #A16207 | 4.607:1 | 4.802:1 |
++
++通常・hover・focus・エラーで指定される配色に4.5:1未満の疑いはない。黒帯は明色文字で、ゴールド文字を置いていない。文字opacity低下や写真への文字重ねもない。
++
++### フォント下限：合格
++
++`site/css/style.css` は基準16px、本文1rem、補足・キャプション・入力例・エラー0.875rem（14px）、ラベル・タグ・パンくず0.75rem（12px）。12px未満の指定なし。入力・ボタンも16px。パンくずはナビゲーションの小ラベルとして判定した。
++
++### 必須状態：要修正（重大度：低）
++
++`site/index.html:267,274,287` の名前・メール・相談内容には `required`／`aria-required="true"` がない。可視ラベル内の「必須」はアクセシブルネームとして伝わり、JS検証もあるため、必須条件がまったく伝わらないわけではない。ただし支援技術が取得する入力の必須状態は未設定。3項目にrequiredを付け、既存novalidateとモック検証を維持することを推奨する。設計に属性の明示指定はなく、追加のアクセシビリティ改善指摘。
++
++### その他：合格（ソース検査）
++
++各ページh1は1つ、ID重複なし。スキップリンク、画像alt、可視ラベル、focus-visible、主要操作の44px以上、メニューのaria-controls／aria-expandedとEscape時のフォーカス復帰、JS無効時の展開ナビ、reduced-motion対応を確認。実機の読み上げ・フォーカス移動は未検証。
++
++## 7. レスポンシブ：要修正（重大度：中・検収不足）、CSSリスク（重大度：低）
++
++| 幅 | コードから確認できた内容 | 判定 |
++|---|---|---|
++| 320px | 左右16px・有効幅288px、カード20px、1列、ボタン全幅 | 静的仕様は合格／実表示未確認 |
++| 375px | 左右20px・有効幅335px、カード24px、記事メタは折り返し可 | 静的仕様は合格／実表示未確認 |
++| 768px | 左右32px・有効幅704px、ヒーロー7:5、料金・記事2列、3枚目は1枠 | 静的仕様は合格／実表示未確認 |
++| 1280px | 左右80px・有効幅1120px、12列相当のヒーロー、料金・記事3列 | 静的仕様は合格／実表示未確認 |
++
++- グリッド子のmin-width:0、minmax(0,1fr)、画像max-width:100%、長文overflow-wrap、ヘッダーの折り返しがあり、指定4幅で横にはみ出すと断定できる固定幅指定は見つからない。サービス／工程の280px列、特商法の240px列は768px以上でのみ適用され、残り列は縮小可能。
++- **低：`site/css/style.css:36` のbodyの `overflow-x:hidden` は、はみ出しが生じた場合に内容を切り落とし、横スクロールがないだけで合格と誤認させる。** 原因となるレイアウトを確認するため、検証時にはこの指定を解除し、画面外の要素を調べることを推奨する。現時点で実際の欠落を確認した指摘ではない。
++- 768px以上の共通CTAは横並びで、アクション側にflex-shrink:0がある（同1071–1101行）。現在の短い文案で必ず崩れるとは判断しないが、200%拡大時は優先確認箇所。必要なら折り返しや本文側min-width:0を追加する。
++- **中：設計10章が要求する4ページ×4幅および200%拡大の描画検収が未完了。** build-logも未確認と明記。今回、ローカルのChromium／Playwrightを発見して起動を試みたが、環境の `Operation not permitted` でブラウザが停止した。したがって「ブラウザが存在しない」ではなく「この環境では起動不可」が正確な状況。実ブラウザで横はみ出し・文字切れ・画像変形を確認し、記録してから公開判定を確定する必要がある。これは確認不足の指摘であり、表示崩れを再現したという意味ではない。
++
++## 8. リンク切れ・ページ間導線：合格
++
++- HTML内のURL属性61件について、ファイル存在とページ内IDを照合。リンク切れ・不明アンカー・重複IDは0件。
++- 共通ナビ、内ページからホームへのパンくず、料金・サービス・フォームへの導線、全ページの特商法リンクを確認。制作例・コラム等に現在ページ表示がある。
++- デモ誘導はworks.html#hiyori、拡大プレビューは実在するローカル画像へ同一タブで遷移。「画像プレビューです。操作できるサイトではありません。」を事前に表示。未提供デモURLの創作はない。
++- columnの「サービスと料金を見る」→index.html#service、特商法の「制作内容・料金を見る」→index.html#pricingは設計指定どおり。
++
++## 9. 実装ログとの照合：合格（未検証事項の留保あり）
++
++記載された実装範囲・配色・フォント・導線・モック処理はソースと整合。`node --check site/js/main.js` は成功。ログのレスポンシブ実装済みという記載はブレークポイントの存在を意味し、4幅や200%拡大での実表示検証済みとは扱わない。今回もブラウザ操作・スクリーンリーダー・実通信計測を完了したとは記録していない。
++
++## 総合判定：修正が必要
++
++文案・料金条件・誠実性・外部読込の排除・リンク整合性は静的検査で合格。高重大度の不具合は見つからない。必須入力の状態属性を改善し、横はみ出しを隠さない状態で4ページ×指定4幅・200%拡大、メニューとモックフォームの実操作を検証して検収記録を補うこと。現時点では設計の公開前検収を満たしたと断定できないため、「このまま公開可」とは判定しない。
+
+codex
+検品結果を [check-log.md](/home/hatch/workspace/projects/portfolio-site/check-log.md) に保存しました。
+
+総合判定は **修正が必要** です。文案・料金・誠実性・外部読込・リンク整合性は静的検査で合格。必須入力の状態属性の改善と、指定4幅・200%拡大での実表示検証が残っています。ブラウザは環境制限で起動できず、未検証事項として記録しました。
+tokens used
+59,865
+検品結果を [check-log.md](/home/hatch/workspace/projects/portfolio-site/check-log.md) に保存しました。
+
+総合判定は **修正が必要** です。文案・料金・誠実性・外部読込・リンク整合性は静的検査で合格。必須入力の状態属性の改善と、指定4幅・200%拡大での実表示検証が残っています。ブラウザは環境制限で起動できず、未検証事項として記録しました。
